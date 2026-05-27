@@ -775,7 +775,7 @@ function CoreWorkCard({
           ) : (
             <div className="space-y-4">
               {descriptionEl}
-              {metricsEvidence}
+              {evidenceGrid}
               {capabilitiesBullets}
             </div>
           )}
@@ -1248,7 +1248,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                 </div>
               ) : project.implementations && project.implementations.length > 0 ? (
                 <Accordion type="single" collapsible className="w-full space-y-4">
-                  {project.implementations.map((impl, index) => (
+                  {project.implementations.map((impl: any, index) => (
                     <AccordionItem key={index} value={`impl-${index}`} className="border rounded-lg px-4">
                       <AccordionTrigger className="hover:no-underline">
                         <div className="flex items-center gap-3">
@@ -1292,7 +1292,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                   const numA = parseInt(a.incidentNumber?.replace("INC-", "") || "0");
                   const numB = parseInt(b.incidentNumber?.replace("INC-", "") || "0");
                   return numA - numB;
-                }).map((item, index) => (
+                }).map((item: any, index) => (
                   <AccordionItem key={index} value={`trouble-${index}`} className="border rounded-lg px-4 last:border-b">
                     <AccordionTrigger className="hover:no-underline">
                       <div className="flex items-center gap-3">
@@ -1317,7 +1317,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                       <div>
                         <h4 className="font-semibold mb-2">증상</h4>
                         <div className="text-body-base text-muted-foreground whitespace-pre-line">
-                          {item.symptom?.split("\n").map((line, i) => (
+                          {item.symptom?.split("\n").map((line: string, i: number) => (
                             <p key={i} className="mb-1">
                               {renderTextWithInlineCode(line)}
                             </p>
@@ -1335,7 +1335,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                       <div>
                         <h4 className="font-semibold mb-2">원인</h4>
                         <div className="text-body-base text-muted-foreground whitespace-pre-line">
-                          {item.cause?.split("\n").map((line, i) => (
+                          {item.cause?.split("\n").map((line: string, i: number) => (
                             <p key={i} className="mb-1">
                               {renderTextWithInlineCode(line)}
                             </p>
@@ -1346,7 +1346,7 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                       <div>
                         <h4 className="font-semibold mb-2">해결 방안</h4>
                         <div className="text-body-base text-muted-foreground whitespace-pre-line">
-                          {item.solution?.split("\n").map((line, i) => (
+                          {item.solution?.split("\n").map((line: string, i: number) => (
                             <p key={i} className="mb-1">
                               {renderTextWithInlineCode(line)}
                             </p>
