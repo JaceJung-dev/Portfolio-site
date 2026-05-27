@@ -2,8 +2,8 @@ export function About() {
   return (
     <section id="about" className="py-20 px-4">
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">About</h2>
-        <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+        <h2 className="text-[26px] md:text-[37px] font-bold mb-8">About</h2>
+        <div className="space-y-6 text-base md:text-[20.5px] text-muted-foreground leading-relaxed">
           <p>
             <span className="text-foreground font-medium">바이오인포매틱스 연구</span>를 시작으로{" "}
             <span className="text-foreground font-medium">데이터 분석부터 AI 서비스 구현까지 end-to-end</span>로 경험을 쌓아온 엔지니어입니다.

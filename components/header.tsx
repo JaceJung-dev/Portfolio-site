@@ -4,7 +4,15 @@ import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
+import dynamic from "next/dynamic"
+
+const ThemeToggle = dynamic(
+  () => import("@/components/theme-toggle").then((m) => m.ThemeToggle),
+  {
+    ssr: false,
+    loading: () => <div className="size-8" aria-hidden />,
+  },
+)
 
 const navItems = [
   { name: "Home", href: "/" },

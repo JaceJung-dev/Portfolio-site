@@ -90,6 +90,196 @@ export const projects = [
         ],
       },
     ],
+    coreWorks: [
+      {
+        type: "feature",
+        layout: "horizontal",
+        tag: "기능 구현",
+        subLabel: "멀티 에이전트 챗봇",
+        title: "LangChain 1.0 기반 페르소나 챗봇 파이프라인 구축",
+        description:
+          "LangGraph 멀티 에이전트로 질의를 자동 분류·라우팅하고, HyperCLOVA X 기반 팀별 페르소나 챗봇(영업왕·주접메이트) 2종을 SSE 스트리밍·멀티턴 저장과 함께 직접 설계·구현했습니다.",
+        image: "/assets/salesking-diagram-iohY3ItPdBMfmAYzFZzJGpiDlQtQu9.png",
+        problem:
+          "단일 챗봇 안에서 질문 유형, 검색 도구, 팀별 페르소나, DB 질의를 함께 처리해야 했습니다. 긴 멀티턴 대화에서는 발화 주체 혼동과 페르소나 일관성 저하도 함께 관리해야 했습니다.",
+        solution:
+          "LangGraph 기반 멀티 에이전트 구조로 질문을 자동 분류하고, 선택된 라우트와 팀별 페르소나에 맞춰 동적으로 프롬프트를 구성해 응답 흐름을 제어했습니다.",
+        pillars: [
+          {
+            name: "Query Routing",
+            lines: ["5개 처리 경로", "자동 분기"],
+          },
+          {
+            name: "Safety Guardrail",
+            lines: ["민감 질문 차단", "PII 마스킹"],
+          },
+          {
+            name: "Dynamic Prompt",
+            lines: ["팀별 페르소나", "지시문 동적 결합"],
+          },
+          {
+            name: "Multi-turn Memory",
+            lines: ["요약·DB 저장", "상태 유지"],
+          },
+        ],
+      },
+      {
+        type: "metric",
+        tag: "성능 개선",
+        subLabel: "RAG 파이프라인",
+        title: "RAG 검색 품질 개선",
+        description:
+          "RAG 파이프라인과 평가 체계를 구축하고, **chunking 전략**·**retrieval 방식**·**stub 제거** 실험을 통해 답변 사실성과 검색 정밀도를 개선했습니다.",
+        metrics: [
+          { label: "Faithfulness", before: "0.651", after: "0.747", delta: "+14.7%" },
+          { label: "Context Precision", before: "0.533", after: "0.664", delta: "+24.7%" },
+        ],
+        processes: [
+          {
+            label: "개선 과정",
+            steps: [
+              {
+                title: "평가 기준 수립",
+                detail:
+                  "RAGAS 기반 Faithfulness · Context Precision으로 검색 품질을 정량 평가 (Baseline Faithfulness 0.1996 대비 향상 폭 측정)",
+              },
+              {
+                title: "검색 구조 개선",
+                detail:
+                  "chunk_size 300/600/800/1200 × vector/hybrid × similarity/MMR × k=3/5 매트릭스 실험 → 800자 chunk + Hybrid Retriever + MMR + k=5 조합 선정",
+              },
+              {
+                title: "Stub 문서 제거",
+                detail:
+                  "저신호 chunk(stub) 제거로 불필요한 컨텍스트 유입 감소 — corpus 정합성 향상",
+              },
+              {
+                title: "동일 조건 ablation",
+                detail:
+                  "hybrid_mmr_k5 고정 후 stub 포함/제거만 변화시킨 controlled comparison — Faithfulness +0.096, Context Precision +0.131 산출 근거",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "metric",
+        tag: "성능 개선",
+        subLabel: "LLM 응답 품질 평가",
+        title: "G-Eval 기반 페르소나 응답 평가",
+        description:
+          "**user case · edge case 평가셋**과 **6개 평가 rubric**을 구성해 프롬프트 v1 / v2의 응답 품질을 항목별로 비교했습니다.",
+        metrics: [
+          { label: "G-Eval Total", before: "0.71", after: "0.79", delta: "+11.3%" },
+        ],
+        highlights: {
+          label: "6개 평가 항목",
+          items: [
+            { label: "팬 페르소나", before: "0.67", after: "0.87" },
+            { label: "친근함·환영", before: "0.90", after: "0.92" },
+            { label: "영업력", before: "0.79", after: "0.87" },
+            { label: "입덕 포인트", before: "0.77", after: "0.85" },
+            { label: "정보 정확성", before: "0.51", after: "0.52" },
+            { label: "대화 유도", before: "0.60", after: "0.72" },
+          ],
+        },
+        images: [
+          {
+            src: "/assets/chatbot-edgecase-flow.png",
+            caption: "User case · Edge case 응답 흐름 — 라우터 → 비개인화/개인화 분기 → 품질 검증",
+          },
+        ],
+        processes: [
+          {
+            label: "평가 설계",
+            steps: [
+              {
+                title: "Evaluation Set",
+                detail: "user case · edge case 구성",
+              },
+              {
+                title: "Rubric Design",
+                detail: "페르소나 품질 6개 축 정의",
+              },
+            ],
+          },
+          {
+            label: "개선 흐름",
+            steps: [
+              {
+                title: "Prompt Iteration",
+                detail: "평가 결과 기반 v1 → v2 개선",
+              },
+              {
+                title: "Score Tracking",
+                detail: "항목별 점수 변화로 효과 추적",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "feature",
+        tag: "기능 개선",
+        subLabel: "멀티 페르소나 메모리 제어",
+        title: "단일 세션 내 발화 주체 혼동 완화",
+        description:
+          "하나의 채팅방에서 여러 팀 팬 페르소나가 번갈아 발언할 때, 현재 발화자는 **프롬프트로 주입**하고 완료된 응답은 **state에 태깅**해 저장했습니다.",
+        pillars: [
+          {
+            name: "Dynamic Prompt",
+            lines: ["team_name 기반으로", "팀별 시스템 프롬프트 생성"],
+          },
+          {
+            name: "Checkpointer Overwrite",
+            lines: ["마지막 AIMessage를 동일 id로", "교체해 태그 prefix 저장"],
+          },
+        ],
+        codeBlock: {
+          title: "핵심 코드 스냅샷",
+          language: "python",
+          code: `# 1) Dynamic Prompt — team별 시스템 프롬프트
+@dynamic_prompt
+def team_persona_prompt(req):
+    team = req.context["team_name"]
+    return get_persona_prompt(team)
+
+# 2) Checkpointer Overwrite — 동일 id로 교체
+state = await agent.aget_state(cfg)
+last = state.values["messages"][-1]
+tagged = AIMessage(content=f"[{team}] {content}", id=last.id)
+
+await agent.aupdate_state(cfg, {"messages": [tagged]})`,
+        },
+        processes: [
+          {
+            label: "구현 흐름",
+            steps: [
+              {
+                title: "Context Read",
+                detail: "현재 발화 팀 식별",
+              },
+              {
+                title: "Prompt Build",
+                detail: "team_name 기반 시스템 프롬프트 생성",
+              },
+              {
+                title: "Response Generation",
+                detail: "팀별 프롬프트로 응답 생성 및 스트리밍",
+              },
+              {
+                title: "State Rewrite",
+                detail: "응답 완료 후 마지막 AIMessage를 동일 id로 교체",
+              },
+              {
+                title: "History Control",
+                detail: "다음 턴 히스토리에 발화자 정보 반영",
+              },
+            ],
+          },
+        ],
+      },
+    ],
     implementations: [],
     troubleshooting: [
       {
@@ -424,6 +614,155 @@ const tempSessionId = generateUUID();`,
         ],
       },
     ],
+    coreWorks: [
+      {
+        type: "metric",
+        tag: "성능 개선",
+        subLabel: "학습 데이터 증강",
+        title: "수능 도메인 분포에 맞춘 LLM 기반 학습 데이터 증강",
+        description:
+          "주어진 데이터에서 **사회 영역·<보기>·순서/부정형 문항 부족**을 확인하고, **LLM 기반 문항 증강과 SFT**로 Macro F1을 개선했습니다.",
+        image: "/assets/data_aug_performance.png",
+        imagePlacement: "bottom",
+        metrics: [
+          { label: "Macro F1 (Public)", before: "0.7198", after: "0.7590", delta: "+5.4%" },
+          { label: "Macro F1 (Private)", before: "0.6138", after: "0.6734", delta: "+9.7%" },
+        ],
+        processes: [
+          {
+            label: "증강 과정",
+            steps: [
+              {
+                title: "데이터 진단",
+                detail:
+                  "국어 대비 사회가 약 2배 많고, <보기> 활용·순서/부정형 등 수능 특화 유형이 부족함을 확인",
+              },
+              {
+                title: "증강 방식 선정",
+                detail:
+                  "외부 데이터는 도메인 분포가 어긋나고 사람 작성은 비효율적이라, 가성비 모델 GPT-4o-mini 기반 LLM 증강으로 결정",
+              },
+              {
+                title: "Fine-tuning 시도와 폐기",
+                detail:
+                  "수능형 QA로 fine-tuning을 시도했으나 <보기> 외형만 학습되고 핵심 주장·추론 지점이 담긴 본문을 만들지 못해 제외",
+              },
+              {
+                title: "Prompt Engineering 채택",
+                detail:
+                  "지문의 핵심 주장·논리 전개를 문항으로 변환하도록 프롬프트와 few-shot 예시를 설계해 의미 단위 추론이 담긴 증강 데이터 확보",
+              },
+              {
+                title: "SFT 학습 적용",
+                detail:
+                  "증강 데이터로 sktAX-4.0-light에 SFT를 적용해 Public/Private Macro F1 모두 개선",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "feature",
+        layout: "horizontal",
+        tag: "기능 구현",
+        subLabel: "MoA 추론 파이프라인",
+        title: "MoA 기반 추론 안정성 개선",
+        description:
+          "**Provider**가 풀이 힌트를 생성하고, **Aggregator**가 힌트 조합별로 병렬 추론한 뒤, **Vote**로 최종 답안을 선택하는 MoA 추론 구조를 설계했습니다.",
+        image: "/assets/moa_pipeline.svg",
+        metrics: [
+          { label: "Macro F1 (Public)", before: "0.7941", after: "0.8073", delta: "+0.0132" },
+          { label: "Macro F1 (Private)", before: "0.7339", after: "0.7370", delta: "+0.0031" },
+        ],
+        problem:
+          "32GB VRAM과 80GB 디스크라는 제한적인 환경에서 모델을 무작정 키우거나 여러 대형 모델을 병렬로 사용하는 방식은 현실적으로 어려웠습니다.\n\n제한된 자원 안에서 수능형 문항의 추론 안정성과 성능을 개선할 구조가 필요했습니다.",
+        solution:
+          "모델 규모를 키우기보다 힌트 생성과 최종 추론 역할을 분리했습니다.",
+        processes: [
+          {
+            steps: [
+              {
+                title: "Provider",
+                detail: "skt/A.X-4.0-Light\ntemperature 0.3 / 0.7 힌트 생성",
+              },
+              {
+                title: "Aggregator",
+                detail: "EXAONE-4.0-32B\n힌트 OFF/ON 조합 3모드 병렬 추론",
+              },
+              {
+                title: "Vote",
+                detail: "3개 답안 다수결\n동점 시 MODE 2 우선",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "feature",
+        tag: "협업",
+        subLabel: "실험 관리 시스템",
+        title: "ML 실험 재현성을 위한 Git 브랜치 컨벤션 설계",
+        description:
+          "성공한 실험만 본 코드에 반영되는 구조에서는 실패 실험, 파라미터, 재현 정보가 사라지기 쉬웠습니다. 이를 해결하기 위해 일반 git flow를 유지하되, **experiment/* 트랙을 추가**한 팀 브랜치 컨벤션을 설계했습니다.",
+        pillars: [
+          {
+            name: "Negative Result 보존",
+            lines: ["실패 실험도 branch에", "영구 기록"],
+          },
+          {
+            name: "재현 가능성 확보",
+            lines: ["코드·파라미터·결과를", "같은 상태로 추적"],
+          },
+          {
+            name: "본 코드 / 실험 분리",
+            lines: ["git flow + experiment", "트랙 운영"],
+          },
+        ],
+        codeBlock: {
+          title: "Branch Convention",
+          language: "bash",
+          code: `main
+develop
+feature/<scope>
+  ├─ feature/data_augmenting
+  ├─ feature/qlora
+  └─ feature/ensemble
+
+experiment/<topic>
+  ├─ experiment/model_select_AX
+  ├─ experiment/model_select_exaone
+  ├─ experiment/exaone_32b
+  └─ experiment/MoA`,
+        },
+        processes: [
+          {
+            label: "컨벤션 도입 과정",
+            steps: [
+              {
+                title: "문제 정의",
+                detail:
+                  "성공 실험만 본 코드에 반영되며, 실패 실험과 재현 정보가 사라짐",
+              },
+              {
+                title: "Semantic Versioning 검토",
+                detail:
+                  "실험 버저닝과 코드베이스 버전 업데이트 개념이 혼용되어 폐기",
+              },
+              {
+                title: "git flow 유지",
+                detail:
+                  "main / develop / feature 흐름은 일반 기능 개발용으로 유지",
+              },
+              {
+                title: "experiment/* 트랙 도입",
+                detail:
+                  "실험 결과를 merge 없이 branch에 보존해 후속 실험 기준으로 활용",
+              },
+            ],
+          },
+        ],
+      },
+    ],
     implementations: [],
     troubleshooting: [
       {
@@ -616,6 +955,116 @@ if getattr(qc, "act_group_aware", False):
           "BGE-reranker-v2-m3 기반 문서 Reranking (Top-K 재정렬)",
           "Hierarchical Hard Voting 앙상블 (4단계 계층적 필터링)",
           "Sparse, Dense, Hybrid x 1stage, 2stage x Reranker 전체 조합 비교",
+        ],
+      },
+    ],
+    coreWorks: [
+      {
+        type: "metric",
+        tag: "성능 개선",
+        subLabel: "Reader 입력 처리",
+        title: "Long Context 최적화",
+        description:
+          "학습 데이터의 **58.7%가 BERT 입력 길이 제한을 초과**하는 문제를 확인하고, **문서 분할·stride 전략**을 조정해 긴 문맥 내 정답 손실을 줄였습니다.",
+        metrics: [
+          { label: "EM", before: "55.00", after: "57.92", delta: "+2.92" },
+          { label: "F1", before: "64.69", after: "67.55", delta: "+2.86" },
+        ],
+        pillars: [
+          {
+            name: "문제 근거",
+            lines: ["58.7% 입력 길이 제한 초과", "정답 위치가 후반부에 분포"],
+          },
+          {
+            name: "최적화 전략",
+            lines: ["max_seq_length / stride 조합", "grid search로 최적 조건 탐색"],
+          },
+        ],
+        images: [
+          {
+            src: "/assets/sliding_window_result.png",
+            caption:
+              "Stride 전략별 EM/F1 비교 — best: max_seq_length 384 + doc_stride 192",
+          },
+        ],
+      },
+      {
+        type: "metric",
+        tag: "성능 개선",
+        subLabel: "Reader 아키텍처",
+        title: "Answer-Aware Window 설계",
+        description:
+          "**Sliding window만으로는** 윈도우 경계에 정답이 걸릴 때 앞뒤 문맥이 비대칭적으로 잘리고, 긴 문서에선 불필요한 문맥 비율이 높아지는 한계가 있었습니다. 정답 후보를 먼저 탐색한 뒤 후보 중심으로 윈도우를 재구성하는 **Two-stage Reader**를 설계했습니다.",
+        metrics: [
+          { label: "EM", before: "57.08", after: "60.42", delta: "+3.34" },
+          { label: "F1", before: "64.60", after: "68.96", delta: "+4.36" },
+        ],
+        pillars: [
+          {
+            name: "Stage 1: 후보 탐색",
+            lines: ["Sliding window로 전체 문서 스캔", "정답 가능 영역 식별"],
+          },
+          {
+            name: "Stage 2: 정밀 추론",
+            lines: ["후보 중심 윈도우 재구성", "정답 주변 문맥 정밀 추론"],
+          },
+        ],
+        images: [
+          {
+            src: "/assets/two_stage_result.png",
+            caption:
+              "Retriever × Reader 조합 비교 — BM25 + Reranker + Two-stage에서 EM 60.42 / F1 68.96 최고 성능",
+          },
+        ],
+        notes: [
+          {
+            label: "Reranker 시너지",
+            body: "**Reranker를 적용한 Retriever와 함께 사용할 때 효과가 더 컸습니다.**\nReranker가 정답 포함 문서를 상위로 올리면, Two-stage Reader가 더 좋은 후보 영역을 다시 읽을 수 있었기 때문입니다.",
+          },
+        ],
+      },
+      {
+        type: "feature",
+        tag: "기능 구현",
+        subLabel: "Retriever 평가 시스템",
+        title: "Retriever 성능 비교 체계 구축",
+        description:
+          "팀원들이 **BM25, TF-IDF, Dense, Hybrid Retriever**를 각각 구현하면서 최종 검색 전략을 선택하기 위한 **공통 평가 기준**이 필요했습니다. 동일 데이터셋에서 **Recall@K, MRR**을 기준으로 Retriever 성능을 통합 비교하는 평가 시스템을 구축하고, 실험 결과를 바탕으로 팀이 납득할 수 있는 최종 Retriever를 결정했습니다.\n\n또한 한국어는 **조사와 어미가 발달한 교착어**라 공백 단위 분절이 의미 단위와 일치하지 않는 경우가 많았습니다. 이에 tokenizer 6종을 비교해 검색 성능 변화를 분석했고, **서브워드 단위 분절**이 가장 안정적인 검색 품질을 보이는 것을 확인했습니다.",
+        metrics: [
+          {
+            label: "Retriever MRR",
+            comparator: "<",
+            lineup: [
+              "Dense 29.37%",
+              "TFIDF 40.79%",
+              "BM25 68.00%",
+              "Hybrid(BM25+Dense) 69.68%",
+            ],
+          },
+          {
+            label: "BM25 토크나이저 MRR",
+            comparator: "<",
+            lineup: [
+              "글자 단위 1.79%",
+              "띄어쓰기 단위 12.19%",
+              "형태소·내용어 37.18%",
+              "형태소 40.25%",
+              "형태소·명사 40.80%",
+              "서브워드 68.00%",
+            ],
+          },
+        ],
+        images: [
+          {
+            src: "/assets/bm25_tokenizer_comparison.png",
+            caption:
+              "BM25 토크나이저 6종 비교 — 서브워드(klue_roberta)가 Recall@K · MRR 모두에서 큰 격차로 우위",
+          },
+          {
+            src: "/assets/retriever_comparison.png",
+            caption:
+              "최종 4개 Retriever 비교 — Hybrid 69.68% / BM25-klue_roberta 68.00% / TFIDF 40.79% / Dense 29.37%",
+          },
         ],
       },
     ],
@@ -843,6 +1292,137 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
           "Gitmoji + 커밋 메시지 규칙 정립",
           "Black⋅Flake8⋅isort 코드 포맷팅 적용",
           "PR 단위 품질 검사(포맷팅·린트·테스트) 자동 실행(GitHub Actions 연동)",
+        ],
+      },
+    ],
+    coreWorks: [
+      {
+        type: "feature",
+        tag: "기능 구현",
+        subLabel: "비동기 스트리밍",
+        title: "Django Channels + WebSocket 기반 챗봇 스트리밍",
+        description:
+          "Django Channels로 챗봇 응답을 WebSocket 기반으로 스트리밍하고, handshake 단계에서 JWT를 검증하는 middleware를 직접 구현했습니다. 이를 통해 인증된 사용자 연결을 유지하면서 토큰 단위 응답 전송이 가능하도록 구성했습니다.",
+        metrics: [
+          {
+            label: "평균 응답 지연",
+            before: "15.49s",
+            after: "10.70s",
+            delta: "-30.9%",
+          },
+          {
+            label: "사용자 만족도",
+            before: "3.7",
+            after: "4.1",
+            delta: "+10.8%",
+          },
+        ],
+        processes: [
+          {
+            label: "응답 방식 개선",
+            numbered: false,
+            steps: [
+              {
+                title: "Before: HTTP Response",
+                detail: "전체 답변 생성 완료 후 한 번에 반환",
+              },
+              {
+                title: "After: Async WebSocket Streaming",
+                detail:
+                  "Django Channels Consumer가 연결을 비동기로 유지하고, LLM 생성 토큰을 즉시 클라이언트로 전송",
+              },
+              {
+                title: "효과",
+                detail: "첫 출력까지의 체감 대기 시간 감소",
+              },
+            ],
+          },
+          {
+            label: "JWT 인증 처리 구조",
+            steps: [
+              {
+                title: "Token 전달",
+                detail: "query string으로 access token 전달",
+              },
+              {
+                title: "Handshake Middleware",
+                detail: "query string에서 token 추출",
+              },
+              {
+                title: "Token 검증",
+                detail: "SimpleJWT AccessToken 검증",
+              },
+              {
+                title: "User Resolve",
+                detail: "user_id 기반 사용자 조회",
+              },
+              {
+                title: "Scope Injection",
+                detail: "scope[\"user\"]에 인증 사용자 주입",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "feature",
+        tag: "기능 구현",
+        subLabel: "질의 분류 정확도",
+        title: "LLM Agent + 규칙 기반 하이브리드 의도 분류",
+        description:
+          "LLM 단독 분류의 흔들림을 잡기 위해 **키워드 가중치 보정**과 **질문 유형 패턴 매칭**을 더해, 같은 질문에는 같은 답변이 나가도록 견고한 의도 분류기를 만들었습니다.",
+        pillars: [
+          {
+            name: "AI 1차 의도 분류",
+            lines: ["사용자 질문을", "6가지 의도 후보로 분류"],
+          },
+          {
+            name: "키워드 가중치 보정",
+            lines: ["사전에 정의한 키워드의", "등장 빈도로 점수 가중"],
+          },
+          {
+            name: "질문 유형 패턴 매칭",
+            lines: ["'어떤 게 있어?' 목록형 vs", "'어떻게 신청해?' 상세형 구분"],
+          },
+        ],
+        image: "/assets/ainfo-classification-pipeline.svg",
+        processes: [
+          {
+            label: "문제 상황",
+            numbered: false,
+            steps: [
+              {
+                title: "LLM 단독 분류의 한계",
+                detail:
+                  "같은 입력에도 분류 결과가 달라지거나,\n한국어의 미묘한 뉘앙스를 잘 잡지 못함\n(예: '주거지원 정책 있어?' → 정책 목록 안내가 적절하지만 상세 안내로 오분류)",
+              },
+            ],
+          },
+          {
+            label: "분류 흐름",
+            steps: [
+              {
+                title: "AI 1차 의도 추정",
+                detail:
+                  "사용자가 무엇을 물었는지 AI가 추측 →\n잡담 · 정책 전반 · 정책 상세 · 맞춤 추천 · 보고서 요청 등\n6가지 의도 중 하나로 후보 선택",
+              },
+              {
+                title: "키워드 가중치 보정",
+                detail:
+                  "사전에 정의한 키워드가 입력에 얼마나 들어있는지 점수로 계산해\nAI가 잘못 짚은 케이스를 보정",
+              },
+              {
+                title: "질문 유형 패턴 매칭",
+                detail:
+                  "'어떤 게 있어?'(목록형) vs '어떻게 신청해?'(상세형) 같은\n사전 정의 패턴으로 한 번 더 구분",
+              },
+              {
+                title: "최종 의도 확정 후 답변 분기",
+                detail:
+                  "AI 추측 + 두 보정을 합쳐 의도 확정 →\n안내 · 정책 목록 · 정책 상세 · 맞춤 추천 · 리포트 생성으로 분기",
+              },
+            ],
+          },
         ],
       },
     ],
@@ -1946,6 +2526,40 @@ python vector_store/load_data.py`,
         items: ["Git/GitHub 중심 협업 및 코드 리뷰", "Git Flow 기반 브랜치 전략"],
       },
     ],
+    coreWorks: [
+      {
+        type: "feature",
+        tag: "기능 구현",
+        subLabel: "할루시네이션 감소",
+        title: "3-Model 분리로 RAG·LLM 출처 정확도 개선",
+        description:
+          "단일 모델이 RAG·LLM 출처를 혼동하던 문제를 RAG 추천(Model A) · LLM 추천(Model B) · 결과 취합(Model C)으로 책임을 분리해 구조를 재설계했습니다.",
+        image: "/assets/bookgroo_chatbot_logic-uWgjycqDhvf3ZoMj77iqdcTo0mHUwL.webp",
+        capabilities: [
+          "Model A: RAG 기반 추천",
+          "Model B: LLM 기반 추천",
+          "Model C: 결과 취합 + 중복 제거",
+          "출처 정보 명확 표시",
+          "프롬프트 복잡도 감소 + 유지보수성 향상",
+        ],
+      },
+      {
+        type: "feature",
+        tag: "기능 구현",
+        subLabel: "데이터 파이프라인 / 배포",
+        title: "신간 도서 RAG 데이터 구축 및 환경 호환성 확보",
+        description:
+          "YES24 신간 도서 크롤러로 RAG 데이터를 직접 수집하고, 상대경로 기반 VectorDB가 Local/Server 환경에서 다르게 해석되던 문제를 절대 경로 기반으로 정리했습니다.",
+        imageTodo:
+          "YES24 크롤링 흐름 또는 VectorDB 경로 호환성 비교 (상대경로 → 절대경로) 다이어그램",
+        capabilities: [
+          "BeautifulSoup 기반 YES24 신간 크롤러",
+          "ChromaDB 벡터 임베딩 구축",
+          "os.path 기반 절대 경로 VectorDB",
+          "Local / Server 환경 동일 결과 보장",
+        ],
+      },
+    ],
     troubleshooting: [
       {
         incidentNumber: "INC-002",
@@ -2174,13 +2788,13 @@ export function Projects() {
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle>{project.title}</CardTitle>
-                  <CardDescription>{project.description}</CardDescription>
+                  <CardTitle className="text-[18px]">{project.title}</CardTitle>
+                  <CardDescription className="text-[16px]">{project.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, tagIndex) => (
-                      <Badge key={tagIndex} variant="secondary">
+                      <Badge key={tagIndex} variant="secondary" className="text-[14px]">
                         {tag}
                       </Badge>
                     ))}

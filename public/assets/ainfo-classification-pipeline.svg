@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 850" font-family="Pretendard, system-ui, -apple-system, 'Segoe UI', 'Noto Sans KR', sans-serif">
+  <style>
+    .t-main { fill: #1E5A60; font-weight: 700; }
+    .t-sub { fill: #4A7A80; }
+    .t-accent { fill: #2A7177; font-weight: 700; letter-spacing: 1px; }
+    .line { stroke: #5A9BA0; stroke-width: 2; fill: none; }
+    .box { fill: #E8F2F3; stroke: #5A9BA0; stroke-width: 1.5; }
+    .box-strong { fill: #B6DCDF; stroke: #2A7177; stroke-width: 2; }
+    .arrow { fill: #5A9BA0; }
+    @media (prefers-color-scheme: dark) {
+      .t-main { fill: #9DDDE2; }
+      .t-sub { fill: #6FB5BB; }
+      .t-accent { fill: #9DDDE2; }
+      .line { stroke: #6FB5BB; }
+      .box { fill: rgba(111, 181, 187, 0.12); stroke: #6FB5BB; }
+      .box-strong { fill: rgba(111, 181, 187, 0.28); stroke: #9DDDE2; }
+      .arrow { fill: #6FB5BB; }
+    }
+  </style>
+
+  <!-- 상단 캡션 -->
+  <text x="40" y="30" font-size="16" class="t-accent">하이브리드 의도 분류 파이프라인</text>
+  <line x1="40" y1="42" x2="350" y2="42" class="line" />
+
+  <!-- 1. 사용자 입력 -->
+  <rect x="120" y="60" width="360" height="50" rx="8" class="box" />
+  <text x="300" y="92" text-anchor="middle" font-size="18" class="t-main">사용자 입력</text>
+
+  <line x1="300" y1="110" x2="300" y2="140" class="line" />
+  <polygon points="295,140 305,140 300,150" class="arrow" />
+
+  <!-- 2. AI 1차 의도 분류 -->
+  <rect x="120" y="150" width="360" height="95" rx="8" class="box" />
+  <text x="300" y="178" text-anchor="middle" font-size="18" class="t-main">AI 1차 의도 분류</text>
+  <text x="300" y="202" text-anchor="middle" font-size="13" class="t-sub">6가지 의도 후보 중 하나 선택</text>
+  <text x="300" y="225" text-anchor="middle" font-size="12" class="t-sub">의도 · 후속 질문 여부 · 검색 키워드 동시 추출</text>
+
+  <line x1="300" y1="245" x2="300" y2="275" class="line" />
+  <polygon points="295,275 305,275 300,285" class="arrow" />
+
+  <!-- 3. 규칙 기반 보정 (헤더) -->
+  <rect x="120" y="285" width="360" height="60" rx="8" class="box-strong" />
+  <text x="300" y="313" text-anchor="middle" font-size="18" class="t-main">규칙 기반 보정</text>
+  <text x="300" y="333" text-anchor="middle" font-size="13" class="t-sub">단어 점수 + 질문 유형 패턴</text>
+
+  <!-- 분기 트리: 3 → 좌/우 -->
+  <line x1="300" y1="345" x2="300" y2="370" class="line" />
+  <line x1="180" y1="370" x2="420" y2="370" class="line" />
+  <line x1="180" y1="370" x2="180" y2="400" class="line" />
+  <polygon points="175,400 185,400 180,410" class="arrow" />
+  <line x1="420" y1="370" x2="420" y2="400" class="line" />
+  <polygon points="415,400 425,400 420,410" class="arrow" />
+
+  <!-- 4. 좌: 키워드 가중치 보정 -->
+  <rect x="80" y="410" width="200" height="80" rx="8" class="box" />
+  <text x="180" y="440" text-anchor="middle" font-size="16" class="t-main">키워드 가중치 보정</text>
+  <text x="180" y="462" text-anchor="middle" font-size="12" class="t-sub">사전 정의 키워드의</text>
+  <text x="180" y="478" text-anchor="middle" font-size="12" class="t-sub">등장 빈도로 점수 가중</text>
+
+  <!-- 5. 우: 질문 유형 패턴 매칭 -->
+  <rect x="320" y="410" width="200" height="80" rx="8" class="box" />
+  <text x="420" y="440" text-anchor="middle" font-size="16" class="t-main">질문 유형 패턴 매칭</text>
+  <text x="420" y="462" text-anchor="middle" font-size="12" class="t-sub">목록형('어떤 게 있어?')</text>
+  <text x="420" y="478" text-anchor="middle" font-size="12" class="t-sub">vs 상세형('어떻게 신청해?')</text>
+
+  <!-- 합치는 트리: 좌/우 → Final -->
+  <line x1="180" y1="490" x2="180" y2="515" class="line" />
+  <line x1="420" y1="490" x2="420" y2="515" class="line" />
+  <line x1="180" y1="515" x2="420" y2="515" class="line" />
+  <line x1="300" y1="515" x2="300" y2="555" class="line" />
+  <polygon points="295,555 305,555 300,565" class="arrow" />
+
+  <!-- 6. 최종 의도 확정 -->
+  <rect x="120" y="565" width="360" height="65" rx="8" class="box-strong" />
+  <text x="300" y="593" text-anchor="middle" font-size="18" class="t-main">최종 의도 확정</text>
+  <text x="300" y="615" text-anchor="middle" font-size="13" class="t-sub">AI 추측 + 두 보정을 합쳐 결과 확정</text>
+
+  <line x1="300" y1="630" x2="300" y2="660" class="line" />
+  <polygon points="295,660 305,660 300,670" class="arrow" />
+
+  <!-- 7. 의도별 답변 분기 -->
+  <rect x="80" y="670" width="440" height="170" rx="8" class="box" />
+  <text x="300" y="700" text-anchor="middle" font-size="18" class="t-main">의도별 답변 분기</text>
+
+  <g font-size="13">
+    <text x="130" y="730" class="t-sub">잡담 / 주제 외 질문</text>
+    <text x="320" y="730" text-anchor="middle" class="arrow">→</text>
+    <text x="340" y="730" class="t-main">안내 메시지</text>
+
+    <text x="130" y="752" class="t-sub">정책 전반 문의</text>
+    <text x="320" y="752" text-anchor="middle" class="arrow">→</text>
+    <text x="340" y="752" class="t-main">정책 목록 안내</text>
+
+    <text x="130" y="774" class="t-sub">특정 정책 상세</text>
+    <text x="320" y="774" text-anchor="middle" class="arrow">→</text>
+    <text x="340" y="774" class="t-main">정책 상세 안내</text>
+
+    <text x="130" y="796" class="t-sub">맞춤 정책 추천</text>
+    <text x="320" y="796" text-anchor="middle" class="arrow">→</text>
+    <text x="340" y="796" class="t-main">프로필 기반 추천</text>
+
+    <text x="130" y="818" class="t-sub">정책 보고서 요청</text>
+    <text x="320" y="818" text-anchor="middle" class="arrow">→</text>
+    <text x="340" y="818" class="t-main">리포트 생성</text>
+  </g>
+</svg>

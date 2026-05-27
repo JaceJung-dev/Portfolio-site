@@ -30,7 +30,7 @@ export function Skills() {
               <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{category.category}</h3>
               <div className="flex flex-wrap gap-3">
                 {category.skills.map((skill, skillIndex) => (
-                  <Badge key={skillIndex} variant="outline" className="text-base py-2 px-4">
+                  <Badge key={skillIndex} variant="outline" className="text-sm md:text-[18.5px] py-1.5 px-3 md:py-2 md:px-4">
                     {skill}
                   </Badge>
                 ))}

@@ -9,7 +9,7 @@ export function Contact() {
         <Card>
           
           <CardContent className="flex flex-col gap-6">
-            <div className="flex items-center gap-3 text-lg">
+            <div className="flex items-center gap-3 text-base md:text-[21.5px] break-all">
               <Mail className="w-5 h-5 text-muted-foreground" />
               <a href="mailto:jacejung.dev@gmail.com" className="hover:text-primary transition-colors">
                 jacejung.dev@gmail.com
