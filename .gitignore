@@ -34,3 +34,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code
+.claude/settings.local.json
+CLAUDE.local.md
