@@ -1,19 +1,7 @@
 import { NextResponse } from "next/server"
 import { Resend } from "resend"
 import { contactFormSchema } from "@/lib/validators"
-import {
-  getClientIp,
-  globalRateLimitDaily,
-  ipRateLimitDaily,
-  ipRateLimitHourly,
-} from "@/lib/rate-limit"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-const TO_EMAIL = process.env.CONTACT_TO_EMAIL ?? ""
-const FROM_EMAIL =
-  process.env.CONTACT_FROM_EMAIL ??
-  "Portfolio Contact <onboarding@resend.dev>"
+import { getClientIp, getRateLimiters } from "@/lib/rate-limit"
 
 function escapeHtml(input: string): string {
   return input
@@ -48,33 +36,51 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true }, { status: 200 })
   }
 
-  const ip = getClientIp(request)
+  const apiKey = process.env.RESEND_API_KEY
+  const toEmail = process.env.CONTACT_TO_EMAIL
+  const fromEmail =
+    process.env.CONTACT_FROM_EMAIL ??
+    "Portfolio Contact <onboarding@resend.dev>"
 
-  const [ipHourly, ipDaily, globalDaily] = await Promise.all([
-    ipRateLimitHourly.limit(ip),
-    ipRateLimitDaily.limit(ip),
-    globalRateLimitDaily.limit("global"),
-  ])
-
-  if (!ipHourly.success || !ipDaily.success || !globalDaily.success) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded" },
-      { status: 429 }
-    )
+  if (!apiKey || !toEmail) {
+    console.error("Contact form misconfigured: missing RESEND_API_KEY or CONTACT_TO_EMAIL")
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 })
   }
 
-  if (!TO_EMAIL) {
-    console.error("CONTACT_TO_EMAIL is not set")
+  const ip = getClientIp(request)
+
+  let ipHourlyResult, ipDailyResult, globalDailyResult
+  try {
+    const limiters = getRateLimiters()
+    ;[ipHourlyResult, ipDailyResult, globalDailyResult] = await Promise.all([
+      limiters.ipHourly.limit(ip),
+      limiters.ipDaily.limit(ip),
+      limiters.globalDaily.limit("global"),
+    ])
+  } catch (error) {
+    console.error("Rate limiter unavailable:", error)
     return NextResponse.json(
       { error: "Server misconfigured" },
       { status: 500 }
     )
   }
 
+  if (
+    !ipHourlyResult.success ||
+    !ipDailyResult.success ||
+    !globalDailyResult.success
+  ) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      { status: 429 }
+    )
+  }
+
   try {
+    const resend = new Resend(apiKey)
     const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: TO_EMAIL,
+      from: fromEmail,
+      to: toEmail,
       replyTo: email,
       subject: `[Portfolio] ${name}님의 메시지`,
       text: `From: ${name} <${email}>\n\n${message}`,
