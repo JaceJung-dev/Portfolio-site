@@ -8,11 +8,11 @@ export function Contact() {
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold mb-12">Contact</h2>
 
-        <div className="space-y-6">
+        <div className="mx-auto max-w-3xl space-y-6">
           <Card>
             <CardContent className="flex flex-col gap-6">
               <div className="flex items-center gap-3 text-base md:text-[21.5px] break-all">
-                <Mail className="w-5 h-5 text-muted-foreground" />
+                <Mail className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
                 <a
                   href="mailto:jacejung.dev@gmail.com"
                   className="hover:text-primary transition-colors"
@@ -25,7 +25,9 @@ export function Contact() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl">Send a message</CardTitle>
+              <CardTitle className="text-xl md:text-2xl">
+                Send a message
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ContactForm />
