@@ -1294,17 +1294,17 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                   return numA - numB;
                 }).map((item: any, index) => (
                   <AccordionItem key={index} value={`trouble-${index}`} className="border rounded-lg px-4 last:border-b">
-                    <AccordionTrigger className="hover:no-underline">
+                    <AccordionTrigger className="hover:no-underline text-body-base">
                       <div className="flex items-center gap-3">
-                        <span className="text-primary font-mono text-body-sm">{item.incidentNumber}</span>
+                        <span className="text-primary font-mono text-body-base">{item.incidentNumber}</span>
                         <span className="text-muted-foreground">|</span>
-                        <Badge variant="outline">{item.category}</Badge>
+                        <Badge variant="outline" className="text-body-sm">{item.category}</Badge>
                         <span className="text-muted-foreground">|</span>
                         <span className="text-left">{item.problem}</span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="space-y-4 pt-4">
-                      <div className="text-body-sm text-muted-foreground">
+                      <div className="text-body-base text-muted-foreground">
                         발견: {item.discoveredDate}
                         {item.resolvedDate && ` | 해결: ${item.resolvedDate}`}
                         {item.assignees && (
@@ -1315,8 +1315,8 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                       </div>
 
                       <div>
-                        <h4 className="font-semibold mb-2">증상</h4>
-                        <div className="text-body-base text-muted-foreground whitespace-pre-line">
+                        <h4 className="font-semibold mb-2 text-body-lg">증상</h4>
+                        <div className="text-[18.5px] text-muted-foreground whitespace-pre-line">
                           {item.symptom?.split("\n").map((line: string, i: number) => (
                             <p key={i} className="mb-1">
                               {renderTextWithInlineCode(line)}
@@ -1327,14 +1327,14 @@ export default function ProjectDetailClient({ id }: { id: string }) {
 
                       {item.errorMessage && (
                         <div>
-                          <h4 className="font-semibold mb-2">오류 메시지</h4>
+                          <h4 className="font-semibold mb-2 text-body-lg">오류 메시지</h4>
                           <CodeBlock code={item.errorMessage} isError />
                         </div>
                       )}
 
                       <div>
-                        <h4 className="font-semibold mb-2">원인</h4>
-                        <div className="text-body-base text-muted-foreground whitespace-pre-line">
+                        <h4 className="font-semibold mb-2 text-body-lg">원인</h4>
+                        <div className="text-[18.5px] text-muted-foreground whitespace-pre-line">
                           {item.cause?.split("\n").map((line: string, i: number) => (
                             <p key={i} className="mb-1">
                               {renderTextWithInlineCode(line)}
@@ -1344,8 +1344,8 @@ export default function ProjectDetailClient({ id }: { id: string }) {
                       </div>
 
                       <div>
-                        <h4 className="font-semibold mb-2">해결 방안</h4>
-                        <div className="text-body-base text-muted-foreground whitespace-pre-line">
+                        <h4 className="font-semibold mb-2 text-body-lg">해결 방안</h4>
+                        <div className="text-[18.5px] text-muted-foreground whitespace-pre-line">
                           {item.solution?.split("\n").map((line: string, i: number) => (
                             <p key={i} className="mb-1">
                               {renderTextWithInlineCode(line)}
@@ -1356,21 +1356,21 @@ export default function ProjectDetailClient({ id }: { id: string }) {
 
                       {item.beforeCode && (
                         <div>
-                          <h4 className="font-semibold mb-2">변경 전</h4>
+                          <h4 className="font-semibold mb-2 text-body-lg">변경 전</h4>
                           <CodeBlock code={item.beforeCode} showLineNumbers />
                         </div>
                       )}
 
                       {item.afterCode && (
                         <div>
-                          <h4 className="font-semibold mb-2">변경 후</h4>
+                          <h4 className="font-semibold mb-2 text-body-lg">변경 후</h4>
                           <CodeBlock code={item.afterCode} showLineNumbers />
                         </div>
                       )}
 
                       <div>
-                        <h4 className="font-semibold mb-2">결과</h4>
-                        <p className="text-body-base text-muted-foreground whitespace-pre-line">{item.result}</p>
+                        <h4 className="font-semibold mb-2 text-body-lg">결과</h4>
+                        <p className="text-[18.5px] text-muted-foreground whitespace-pre-line">{item.result}</p>
                       </div>
                     </AccordionContent>
                   </AccordionItem>

@@ -3,7 +3,7 @@ import { Github, BookOpen } from "lucide-react"
 export function Hero() {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20">
-      <div className="max-w-4xl w-full">
+      <div className="max-w-6xl w-full mx-auto">
         <div className="space-y-8">
           <div className="space-y-4">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-balance">
