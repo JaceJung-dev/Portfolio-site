@@ -405,8 +405,15 @@ type CoreWork = {
     language?: string
     code: string
   }
+  codeCompare?: {
+    title?: string
+    language?: string
+    before: string
+    after: string
+  }
   flow?: { label?: string; steps: string[] }
   notes?: { label?: string; body: string }[]
+  wideImage?: boolean
 }
 
 function CoreWorkCard({
@@ -517,7 +524,7 @@ function CoreWorkCard({
         }`}
       >
         {work.highlights.items.map((it, i) => (
-          <li key={i} className="flex items-baseline justify-between gap-3 max-w-[260px]">
+          <li key={i} className="flex items-baseline justify-between gap-3 max-w-[320px]">
             <span className="text-base text-foreground">{it.label}</span>
             <span className="flex items-baseline gap-2 shrink-0">
               <span className="text-base text-muted-foreground">{it.before}</span>
@@ -534,12 +541,19 @@ function CoreWorkCard({
 
   const evidenceCells = [...metricBoxes, highlightsBox].filter(Boolean)
   const hasLineupMetric = work.metrics?.some((m) => m.lineup && m.lineup.length > 0)
+  // metric 점수 박스 1개 + highlights 박스 1개일 때는 점수는 좁게, 항목은 넓게(2:3)
+  const isMetricPlusHighlights =
+    !hasLineupMetric && metricBoxes.length === 1 && Boolean(highlightsBox)
+
+  const evidenceColsClass = hasLineupMetric
+    ? "grid-cols-1"
+    : isMetricPlusHighlights
+      ? "grid-cols-1 sm:grid-cols-[2fr_3fr]"
+      : "grid-cols-1 sm:grid-cols-2"
 
   const evidenceGrid =
     evidenceCells.length > 0 ? (
-      <div className={`grid gap-3 ${hasLineupMetric ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
-        {evidenceCells}
-      </div>
+      <div className={`grid gap-3 ${evidenceColsClass}`}>{evidenceCells}</div>
     ) : null
 
   const pillarCount = work.pillars?.length ?? 0
@@ -577,6 +591,30 @@ function CoreWorkCard({
       )}
       <div className="dark">
         <CodeBlock code={work.codeBlock.code} language={work.codeBlock.language} />
+      </div>
+    </div>
+  ) : null
+
+  const codeCompareEl = work.codeCompare ? (
+    <div className="border border-border rounded-lg p-6 bg-muted/30">
+      {work.codeCompare.title && (
+        <p className="text-xl font-semibold mb-5 text-emerald-600 dark:text-emerald-400">
+          {work.codeCompare.title}
+        </p>
+      )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+        <div>
+          <p className="text-base font-semibold mb-2 text-red-600 dark:text-red-400">변경 전</p>
+          <div className="dark">
+            <CodeBlock code={work.codeCompare.before} language={work.codeCompare.language} />
+          </div>
+        </div>
+        <div>
+          <p className="text-base font-semibold mb-2 text-emerald-600 dark:text-emerald-400">변경 후</p>
+          <div className="dark">
+            <CodeBlock code={work.codeCompare.after} language={work.codeCompare.language} />
+          </div>
+        </div>
       </div>
     </div>
   ) : null
@@ -866,6 +904,7 @@ function CoreWorkCard({
       {evidenceGrid && <div className="mt-5">{evidenceGrid}</div>}
       {pillarsGrid && <div className="mt-5">{pillarsGrid}</div>}
       {notesBlock && <div className="mt-5">{notesBlock}</div>}
+      {codeCompareEl && <div className="mt-5">{codeCompareEl}</div>}
       {pairCodeAndProcess ? (
         <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
           <div>{codeBlockEl}</div>
@@ -877,9 +916,13 @@ function CoreWorkCard({
           <div>{imagesBlock}</div>
         </div>
       ) : pairImageAndProcess ? (
-        <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-          <div>{imagesBlock}</div>
-          <div>{processEvidence}</div>
+        <div
+          className={`mt-5 grid grid-cols-1 gap-5 items-start ${
+            work.wideImage ? "lg:grid-cols-5" : "lg:grid-cols-2"
+          }`}
+        >
+          <div className={work.wideImage ? "lg:col-span-3" : ""}>{imagesBlock}</div>
+          <div className={work.wideImage ? "lg:col-span-2" : ""}>{processEvidence}</div>
         </div>
       ) : pairProcesses ? (
         <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
@@ -1001,11 +1044,16 @@ export default function ProjectDetailClient({ id }: { id: string }) {
     setLightboxIndex((prev) => (prev === lightboxImages.length - 1 ? 0 : prev + 1))
   }
 
+  // 개요 탭 갤러리: 히어로로 올린 아키텍처/파이프라인 이미지는 제외
+  const galleryImages = (project.galleryImages ?? []).filter(
+    (image) => image !== project.heroImage
+  )
+
   return (
     <>
       <Header />
       <div className="min-h-screen pt-20">
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto px-4 py-12">
           <Button variant="ghost" className="mb-8 text-[15.5px]" onClick={handleBackToProjects}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             프로젝트 목록으로
@@ -1113,43 +1161,79 @@ export default function ProjectDetailClient({ id }: { id: string }) {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-8 mt-6">
+              {project.heroImage && (
+                <figure
+                  className="overflow-hidden rounded-xl border border-border bg-card cursor-zoom-in hover:shadow-lg transition-shadow"
+                  onClick={() => openLightbox([project.heroImage!], 0)}
+                >
+                  <img src={project.heroImage} alt={`${project.title} 시스템 구조`} className="w-full" />
+                  {project.heroCaption && (
+                    <figcaption className="border-t border-border px-4 py-2.5 text-[13px] text-muted-foreground">
+                      {project.heroCaption}
+                    </figcaption>
+                  )}
+                </figure>
+              )}
+
               <div>
                 <h3 className="text-[21px] font-semibold mb-4">프로젝트 개요</h3>
                 <p className="text-[19px] text-muted-foreground leading-relaxed">{project.overview}</p>
               </div>
 
-              {project.features && project.features.length > 0 && (
-                <div>
-                  <h3 className="text-[21px] font-semibold mb-4">{project.id === "csat-solver" ? "시도 전략" : "전체 기능"}</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {project.features.map((feature, index) => (
-                      <Card key={index} className="p-6">
-                        <h4 className="font-semibold mb-3 text-[19px]">{feature.category}</h4>
-                        <ul className="space-y-2">
-                          {feature.items.map((item, itemIndex) => (
-                            <li key={itemIndex} className="flex items-start gap-2">
-                              <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                              <span className="text-[18.5px] text-muted-foreground">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </Card>
-                    ))}
-                  </div>
+              {project.keyMetrics && project.keyMetrics.length > 0 && (
+                <div className="flex flex-wrap gap-4">
+                  {project.keyMetrics.map((metric, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-1 basis-[220px] flex-col gap-1 rounded-xl border border-border border-l-4 border-l-primary bg-muted/30 px-6 py-5"
+                    >
+                      <span className="text-[30px] font-bold tabular-nums leading-none text-emerald-600 dark:text-emerald-400">
+                        {metric.value}
+                      </span>
+                      <span className="text-[14.5px] text-muted-foreground">{metric.label}</span>
+                    </div>
+                  ))}
                 </div>
               )}
 
-              {project.galleryImages && project.galleryImages.length > 0 && (
+              {project.coreWorks && project.coreWorks.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("core-works")}
+                  className="group block w-full cursor-pointer rounded-xl border border-border bg-muted/30 px-6 py-5 text-left transition-colors hover:border-primary/50 hover:bg-muted/60"
+                >
+                  <p className="mb-4 text-[18px] font-bold">이 프로젝트에서 해결한 것</p>
+                  <ul>
+                    {(project.coreWorks as CoreWork[]).map((work, index) => (
+                      <li
+                        key={index}
+                        className="border-b border-border/60 py-2 text-[16.5px] last:border-b-0"
+                      >
+                        <span className="mr-2 text-primary">•</span>
+                        {work.title}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex justify-end">
+                    <span className="inline-flex items-center gap-1.5 text-[17px] font-medium text-primary">
+                      핵심 작업 탭에서 자세히 보기
+                      <span className="transition-transform group-hover:translate-x-1">→</span>
+                    </span>
+                  </div>
+                </button>
+              )}
+
+              {galleryImages.length > 0 && (
                 <div>
                   <h3 className="text-[21px] font-semibold mb-4">갤러리</h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {project.galleryImages.map((image, index) => {
+                    {galleryImages.map((image, index) => {
                       const isVideo = image.endsWith(".mp4") || image.endsWith(".webm") || image.endsWith(".mov")
                       return (
                         <Card
                           key={index}
                           className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-                          onClick={() => openLightbox(project.galleryImages!, index)}
+                          onClick={() => openLightbox(galleryImages, index)}
                         >
                           {isVideo ? (
                             <video
@@ -1176,10 +1260,12 @@ export default function ProjectDetailClient({ id }: { id: string }) {
             </TabsContent>
 
             <TabsContent value="core-works" className="mt-6">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                <Users className="w-4 h-4" />
-                <span>팀 프로젝트 중 제가 직접 맡아 진행한 작업만 모았습니다.</span>
-              </div>
+              {project.id !== "bookgroo" && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                  <Users className="w-4 h-4" />
+                  <span>팀 프로젝트 중 제가 직접 맡아 진행한 작업만 모았습니다.</span>
+                </div>
+              )}
               {project.coreWorks && project.coreWorks.length > 0 ? (
                 <div className="flex gap-6">
                   <div className="flex flex-col gap-4 flex-1 min-w-0">

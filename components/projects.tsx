@@ -15,6 +15,13 @@ export const projects = [
     teamSize: "4명",
     role: "백엔드 개발 및 LLM 파이프라인 구축 및 데이터 증강",
     overview: "팬덤 소비가 단순 관람을 넘어 '참여'와 '정체성 형성' 중심으로 변화하는 흐름 속에서, 입덕 초기 사용자가 겪는 정보 과잉과 진입 장벽 문제를 해결하기 위해 기획된 서비스입니다.\n\n사용자의 성향과 취향을 대화 기반으로 분석하고, 각 구단 팬 페르소나를 가진 AI들과의 상호작용을 통해 가장 잘 맞는 KBO 리그 팀을 추천합니다. 단순한 팀 선택에 그치지 않고, 선택 이후에도 팬 AI와의 지속적인 대화를 통해 응원 포인트와 팀 서사를 자연스럽게 익히며 소속감을 형성하도록 설계된 입덕 여정 전반을 아우르는 야구 영업 챗봇 서비스입니다.",
+    heroImage: "/assets/system-arch-ai2xogsfFbmtEcSWr1ib4S8C9xtUAU.png",
+    heroCaption: "시스템 아키텍처 — 멀티 에이전트 · RAG · 데이터 파이프라인",
+    keyMetrics: [
+      { label: "RAG 답변 사실성 (Faithfulness)", value: "+14.7%" },
+      { label: "검색 정밀도 (Context Precision)", value: "+24.7%" },
+      { label: "페르소나 응답 품질 (G-Eval)", value: "+11.3%" },
+    ],
     galleryImages: [
       "/assets/final-seg1-epgGN0W2dKNCitQhLuVEHEm6Nh0CJM.mp4",
       "/assets/final-seg2-JgPUP4I33PZgXfj3zdIm4nWSJ3YjuE.mp4",
@@ -169,6 +176,7 @@ export const projects = [
         title: "G-Eval 기반 페르소나 응답 평가",
         description:
           "**user case · edge case 평가셋**과 **6개 평가 rubric**을 구성해 프롬프트 v1 / v2의 응답 품질을 항목별로 비교했습니다.",
+        wideImage: true,
         metrics: [
           { label: "G-Eval Total", before: "0.71", after: "0.79", delta: "+11.3%" },
         ],
@@ -569,6 +577,12 @@ const tempSessionId = generateUUID();`,
     teamSize: "4명",
     role: "LLM 파이프라인 설계 및 데이터 증강",
     overview: "CSAT-Solver는 네이버 커넥트재단의 컴페티션 형태로 진행된 프로젝트로, 대한민국 대학수학능력시험(CSAT) 유형의 문제를 해결하는 AI 모델을 설계하는 것을 목표로 합니다. 본 프로젝트에서 해결하고자 한 핵심 문제는, GPT·Claude·Gemini와 같은 초대형 모델이 아닌 상대적으로 작은 규모의 언어 모델(Small / Medium LLM)만으로도 CSAT형 문제를 얼마나 효과적으로 풀어낼 수 있는가였습니다. CSAT-Solver는 단순한 모델 성능 비교를 넘어, 수능이라는 시험에 최적화된 AI 모델을 설계할 수 있는가에 대한 실험이자 지속적인 학습의 과정, 그리고 도전입니다.",
+    heroImage: "/assets/csat-pipeline.svg",
+    heroCaption: "모델 개발 파이프라인 — 데이터 → 학습 → 서빙(llama.cpp) → 개선",
+    keyMetrics: [
+      { label: "공개 리더보드 정답률 (Macro F1)", value: "+5.4%" },
+      { label: "비공개 리더보드 정답률 (Macro F1)", value: "+9.7%" },
+    ],
     galleryImages: [],
     features: [
       {
@@ -921,6 +935,12 @@ if getattr(qc, "act_group_aware", False):
     teamSize: "4명",
     role: "Retriever 및 Reader 모델 설계, 데이터 전처리 파이프라인 구축",
     overview: "Open-Domain Question Answering(ODQA)은 별도의 지문 없이 사전 구축된 Knowledge resource에서 질문에 대답할 수 있는 문서를 검색하고 답변을 추출하는 고난이도 QA 과제입니다. 본 프로젝트에서는 질문과 관련된 문서를 찾는 Retriever 단계와 해당 문서에서 정답을 추출하는 Reader 단계로 구성된 Two-stage 파이프라인을 설계했습니다. 두 단계를 효과적으로 통합하여, 다양한 도메인의 질문에 답변할 수 있는 ODQA 시스템을 구축했습니다.",
+    heroImage: "/assets/odqa-pipeline.svg",
+    heroCaption: "Retriever–Reader Two-stage 파이프라인",
+    keyMetrics: [
+      { label: "정답 일치율 (EM)", value: "+3.34" },
+      { label: "토큰 단위 정답률 (F1)", value: "+4.36" },
+    ],
     galleryImages: [],
     features: [
       {
@@ -1236,6 +1256,12 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
     role: "백엔드 개발",
     overview:
       "Django REST Framework(DRF)와 LangChain 기반으로 개발된 AI 챗봇 서비스로, 사용자의 상황과 특성에 맞는 정부·지자체 공공서비스를 맞춤 추천합니다. Retrieval-Augmented Generation(RAG) 방식을 적용해 LLM의 생성 능력과 실제 공공 데이터의 신뢰성을 결합하고, CrewAI 기반 멀티 에이전트 구조로 웹 검색과 보고서 생성을 자동화했습니다. WebSocket을 통한 실시간 응답 기능을 더해, 사용자와의 자연스러운 대화 경험을 구현했습니다.",
+    heroImage: "/assets/ainfo_architecture-QXth2mU2KLBuGs31L0sMYxweMGYUMs.png",
+    heroCaption: "시스템 아키텍처 — RAG · CrewAI 멀티 에이전트 · WebSocket",
+    keyMetrics: [
+      { label: "평균 응답 지연 (latency)", value: "-30.9%" },
+      { label: "사용자 만족도", value: "+10.8%" },
+    ],
     galleryImages: [
       "/assets/ainfo_main-5o8RXl90scf7yZGg9Lj8lKbVO4jUr5.gif",
       "/assets/ainfo_pay-dJruB6SB8MakHkGEA0mEoORRxSZC8a.gif",
@@ -2502,6 +2528,8 @@ python vector_store/load_data.py`,
     role: "백엔드 개발",
     overview:
       "사용자의 독서 성향, 현재 감정 상태, 취향을 분석하여 최적의 도서를 추천하는 AI 챗봇 서비스입니다. LangChain과 ChromaDB를 활용하여 의미 기반 검색과 개인화된 추천을 제공합니다.",
+    heroImage: "/assets/bookgroo_architecture-ve1zwHQMDkrhPeRE5epGSfVJrUC1ZF.png",
+    heroCaption: "시스템 아키텍처 — 3-Model 분리 추천 · RAG",
     galleryImages: [
       "/assets/Bookgroo_chat-20xOLmMSn1SxGSPsZrBjj8AXcdyM38.gif",
       "/assets/Bookgroo_signup-wf5z6QJBPiFPKLVHDudpq8ylRKHTdt.png",
@@ -2550,8 +2578,26 @@ python vector_store/load_data.py`,
         title: "신간 도서 RAG 데이터 구축 및 환경 호환성 확보",
         description:
           "YES24 신간 도서 크롤러로 RAG 데이터를 직접 수집하고, 상대경로 기반 VectorDB가 Local/Server 환경에서 다르게 해석되던 문제를 절대 경로 기반으로 정리했습니다.",
-        imageTodo:
-          "YES24 크롤링 흐름 또는 VectorDB 경로 호환성 비교 (상대경로 → 절대경로) 다이어그램",
+        codeCompare: {
+          title: "VectorDB 경로: 상대경로 → 절대경로",
+          language: "python",
+          before: `# 상대경로 — 실행 위치에 따라 경로 해석이 달라짐
+book_DB = Chroma(
+    persist_directory="../book_DB",
+    embedding_function=embeddings,
+)`,
+          after: `# 절대경로 — Local / Server 동일 결과 보장
+import os
+
+root_dir = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
+book_DB_dir = os.path.join(root_dir, "book_DB")
+book_DB = Chroma(
+    persist_directory=book_DB_dir,
+    embedding_function=embeddings,
+)`,
+        },
         capabilities: [
           "BeautifulSoup 기반 YES24 신간 크롤러",
           "ChromaDB 벡터 임베딩 구축",
