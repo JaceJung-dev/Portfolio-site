@@ -28,11 +28,21 @@ function renderTextWithInlineCode(text: string) {
 }
 
 function renderEmphasized(text: string) {
-  const parts = text.split(/(\*\*.+?\*\*)/g)
+  const parts = text.split(/(\*\*.+?\*\*|==.+?==)/g)
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
       return (
         <span key={index} className="text-foreground font-medium">
+          {part.slice(2, -2)}
+        </span>
+      )
+    }
+    if (part.startsWith("==") && part.endsWith("==") && part.length > 4) {
+      return (
+        <span
+          key={index}
+          className="font-semibold text-emerald-600 dark:text-emerald-400"
+        >
           {part.slice(2, -2)}
         </span>
       )
@@ -393,8 +403,13 @@ type CoreWork = {
   }
   capabilities?: string[]
   problem?: string
+  problemFirst?: boolean
+  metricsBox?: { title: string; items: { label: string; body: string }[] }
   solution?: string
+  solutionLabel?: string
   pillars?: { name: string; lines: string[] }[]
+  pillarsTitle?: string
+  diagram?: { src: string; caption?: string; title?: string }
   processes?: {
     label?: string
     numbered?: boolean
@@ -469,46 +484,82 @@ function CoreWorkCard({
     </div>
   )
 
+  const metricInner = (m: NonNullable<CoreWork["metrics"]>[number]) => {
+    if (m.lineup && m.lineup.length > 0) {
+      const parsed = m.lineup
+        .map((s) => {
+          const mt = s.match(/^(.*?)\s*([\d.]+)\s*%?\s*$/)
+          return mt
+            ? { label: mt[1].trim(), value: parseFloat(mt[2]) }
+            : { label: s, value: 0 }
+        })
+        .sort((a, b) => b.value - a.value)
+      const max = Math.max(...parsed.map((p) => p.value)) || 1
+      return (
+        <div className="space-y-2.5">
+          {parsed.map((p, idx) => {
+            const win = idx === 0
+            return (
+              <div key={idx} className="flex items-center gap-3">
+                <span
+                  className={`w-44 shrink-0 text-right text-base leading-tight ${
+                    win ? "text-foreground font-medium" : "text-muted-foreground"
+                  }`}
+                >
+                  {p.label}
+                </span>
+                <div className="relative h-5 flex-1 overflow-hidden rounded bg-muted/50">
+                  <div
+                    className={`h-full rounded ${
+                      win ? "bg-emerald-500/80" : "bg-muted-foreground/30"
+                    }`}
+                    style={{ width: `${(p.value / max) * 100}%` }}
+                  />
+                </div>
+                <span
+                  className={`w-16 shrink-0 text-right font-mono text-base tabular-nums ${
+                    win
+                      ? "font-semibold text-emerald-600 dark:text-emerald-400"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {p.value.toFixed(2)}%
+                </span>
+              </div>
+            )
+          })}
+          {m.delta && (
+            <p className="mt-1.5 text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+              {m.delta}
+            </p>
+          )}
+        </div>
+      )
+    }
+    return (
+      <div className="flex items-baseline justify-between gap-x-3 gap-y-1.5 flex-wrap">
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="text-xl text-muted-foreground">{m.before}</span>
+          <span className="text-muted-foreground text-lg">{m.comparator ?? "→"}</span>
+          <span className="text-3xl font-semibold text-emerald-600 dark:text-emerald-400">
+            {m.after}
+          </span>
+        </div>
+        {m.delta && (
+          <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+            {m.delta}
+          </span>
+        )}
+      </div>
+    )
+  }
+
   const metricBoxes =
-    work.metrics && work.metrics.length > 0
+    !work.metricsBox && work.metrics && work.metrics.length > 0
       ? work.metrics.map((m, i) => (
           <div key={`metric-${i}`} className="bg-muted/60 rounded-lg px-5 py-4">
             <p className="text-lg font-semibold text-foreground mb-2.5">{m.label}</p>
-            {m.lineup && m.lineup.length > 0 ? (
-              <div className="flex items-baseline gap-x-2.5 gap-y-1.5 flex-wrap">
-                {m.lineup.map((val, idx) => (
-                  <span key={idx} className="flex items-baseline gap-2">
-                    {idx > 0 && (
-                      <span className="text-muted-foreground text-base">
-                        {m.comparator ?? "→"}
-                      </span>
-                    )}
-                    <span
-                      className={
-                        idx === m.lineup!.length - 1
-                          ? "text-2xl font-semibold text-emerald-600 dark:text-emerald-400"
-                          : "text-lg text-muted-foreground"
-                      }
-                    >
-                      {val}
-                    </span>
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-xl text-muted-foreground">{m.before}</span>
-                <span className="text-muted-foreground text-lg">{m.comparator ?? "→"}</span>
-                <span className="text-3xl font-semibold text-emerald-600 dark:text-emerald-400">
-                  {m.after}
-                </span>
-              </div>
-            )}
-            {m.delta && (
-              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 mt-1.5">
-                {m.delta}
-              </p>
-            )}
+            {metricInner(m)}
           </div>
         ))
       : []
@@ -556,29 +607,187 @@ function CoreWorkCard({
       <div className={`grid gap-3 ${evidenceColsClass}`}>{evidenceCells}</div>
     ) : null
 
+  // 정량 평가 결과를 텍스트 요약으로 한 박스에 묶고 01·02 넘버링 + 공통 제목
+  const metricsGroupBox =
+    work.metricsBox && work.metricsBox.items.length > 0 ? (
+      <div className="border border-border rounded-lg p-6 bg-muted/30">
+        <p className="text-xl font-semibold mb-5 text-emerald-600 dark:text-emerald-400">
+          {work.metricsBox.title}
+        </p>
+        <div className="space-y-5">
+          {work.metricsBox.items.map((it, i) => (
+            <div key={i} className="flex gap-4">
+              <span className="font-mono text-base font-semibold text-emerald-600 dark:text-emerald-400 pt-1 shrink-0 w-9">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-lg font-semibold text-foreground mb-1.5">{it.label}</p>
+                <p className="text-[17px] text-muted-foreground leading-relaxed">
+                  {renderEmphasized(it.body)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : null
+
+  const problemBox = work.problem ? (
+    <div className="border border-border rounded-lg p-5 bg-muted/30">
+      <p className="text-xl font-semibold mb-2.5 text-red-600 dark:text-red-400">
+        문제 정의
+      </p>
+      <div className="space-y-2 text-lg text-muted-foreground leading-relaxed">
+        {work.problem.split("\n").map((line, i) => {
+          const numbered = line.match(/^(\d+)\.\s+(.*)$/)
+          if (line.startsWith("• ")) {
+            return (
+              <div key={i} className="flex gap-2 pl-3">
+                <span aria-hidden className="select-none">
+                  •
+                </span>
+                <span className="flex-1">{renderEmphasized(line.slice(2))}</span>
+              </div>
+            )
+          }
+          if (numbered) {
+            return (
+              <div key={i} className="flex gap-2.5">
+                <span className="shrink-0 font-mono font-semibold text-red-600 dark:text-red-400">
+                  {numbered[1].padStart(2, "0")}.
+                </span>
+                <span className="flex-1">{renderEmphasized(numbered[2])}</span>
+              </div>
+            )
+          }
+          return <p key={i}>{renderEmphasized(line)}</p>
+        })}
+      </div>
+    </div>
+  ) : null
+
+  const solutionBox = work.solution ? (
+    <div className="border border-border rounded-lg p-5 bg-muted/30">
+      <p className="text-xl font-semibold mb-2.5 text-emerald-600 dark:text-emerald-400">
+        {work.solutionLabel ?? "해결 구조"}
+      </p>
+      <div className="space-y-2 text-lg text-muted-foreground leading-relaxed">
+        {work.solution.split("\n").map((line, i) => {
+          if (line.startsWith("• ")) {
+            return (
+              <div key={i} className="flex gap-2 pl-3">
+                <span aria-hidden className="select-none">
+                  •
+                </span>
+                <span className="flex-1">{renderEmphasized(line.slice(2))}</span>
+              </div>
+            )
+          }
+          return <p key={i}>{renderEmphasized(line)}</p>
+        })}
+      </div>
+    </div>
+  ) : null
+
   const pillarCount = work.pillars?.length ?? 0
-  const pillarColsClass =
-    pillarCount <= 2
+  const isSinglePillar = pillarCount === 1
+  const pillarColsClass = isSinglePillar
+    ? ""
+    : pillarCount === 2
       ? "sm:grid-cols-2"
       : pillarCount === 3
         ? "sm:grid-cols-2 lg:grid-cols-3"
         : "sm:grid-cols-2 lg:grid-cols-4"
 
+  const pillarCards = work.pillars && work.pillars.length > 0 && (
+    <div className={`grid grid-cols-1 ${pillarColsClass} gap-3`}>
+      {work.pillars.map((p, i) => (
+        <div
+          key={i}
+          className={`border border-border rounded-lg p-5 ${
+            work.pillarsTitle ? "bg-background" : "bg-muted/30"
+          }`}
+        >
+          <p
+            className={`font-semibold ${
+              isSinglePillar
+                ? "mb-2.5 text-xl text-emerald-600 dark:text-emerald-400"
+                : "mb-2 text-base"
+            }`}
+          >
+            {p.name}
+          </p>
+          <div className="space-y-1">
+            {p.lines.map((l, j) => (
+              <p
+                key={j}
+                className={`text-muted-foreground leading-relaxed ${
+                  isSinglePillar ? "text-lg" : "text-base"
+                }`}
+              >
+                {l}
+              </p>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+
   const pillarsGrid =
     work.pillars && work.pillars.length > 0 ? (
-      <div className={`grid grid-cols-1 ${pillarColsClass} gap-3`}>
-        {work.pillars.map((p, i) => (
-          <div key={i} className="border border-border rounded-lg p-5 bg-muted/30">
-            <p className="text-base font-semibold mb-2">{p.name}</p>
-            <div className="space-y-1">
-              {p.lines.map((l, j) => (
-                <p key={j} className="text-base text-muted-foreground leading-relaxed">
-                  {l}
-                </p>
-              ))}
-            </div>
+      work.pillarsTitle ? (
+        <div className="border border-border rounded-lg p-6 bg-muted/30">
+          <p className="text-xl font-semibold mb-5 text-emerald-600 dark:text-emerald-400">
+            {work.pillarsTitle}
+          </p>
+          {pillarCards}
+        </div>
+      ) : (
+        pillarCards
+      )
+    ) : null
+
+  // 왼쪽: 다이어그램, 오른쪽: pillar(Stage) 박스 2개 스택 레이아웃
+  const diagramPillarsRow =
+    work.diagram && work.pillars && work.pillars.length > 0 ? (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        <figure className="self-start overflow-hidden rounded-lg border border-border">
+          <img
+            src={work.diagram.src}
+            alt={work.diagram.caption ?? `${work.title} 다이어그램`}
+            className="w-full h-auto block"
+          />
+        </figure>
+        <div className="border border-border rounded-lg p-6 bg-muted/30 flex flex-col">
+          <p className="text-xl font-semibold mb-5 text-emerald-600 dark:text-emerald-400">
+            {work.diagram.title ?? "동작 방식"}
+          </p>
+          <div className="flex flex-1 flex-col justify-around gap-5">
+            {work.pillars.map((p, i) => (
+              <div key={i} className="flex gap-4">
+                <span className="font-mono text-base font-semibold text-emerald-600 dark:text-emerald-400 pt-1 shrink-0 w-9">
+                  {String(i + 1).padStart(2, "0")}.
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-lg font-semibold text-foreground mb-1.5">
+                    {p.name}
+                  </p>
+                  <div className="space-y-1">
+                    {p.lines.map((l, j) => (
+                      <p
+                        key={j}
+                        className="text-base text-muted-foreground leading-relaxed"
+                      >
+                        {l}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     ) : null
 
@@ -733,15 +942,15 @@ function CoreWorkCard({
     <div className="flex flex-col gap-3 md:h-full">
       {work.problem && (
         <div className="border border-border rounded-lg p-5 bg-muted/30 md:flex-1 flex flex-col justify-center">
-          <p className="text-lg font-semibold mb-2.5 text-emerald-600 dark:text-emerald-400">문제 정의</p>
+          <p className="text-lg font-semibold mb-2.5 text-red-600 dark:text-red-400">문제 정의</p>
           <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-line">{work.problem}</p>
         </div>
       )}
       {work.solution && (
         <div className="border border-border rounded-lg p-5 bg-muted/30 md:flex-1 flex flex-col gap-4">
           <div>
-            <p className="text-lg font-semibold mb-2.5 text-emerald-600 dark:text-emerald-400">해결 구조</p>
-            <p className="text-lg text-muted-foreground leading-relaxed">{work.solution}</p>
+            <p className="text-lg font-semibold mb-2.5 text-emerald-600 dark:text-emerald-400">{work.solutionLabel ?? "해결 구조"}</p>
+            <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-line">{work.solution}</p>
           </div>
           {narrativeProcessSteps.length > 0 && (
             <ol className="space-y-3">
@@ -878,7 +1087,7 @@ function CoreWorkCard({
         {work.notes.map((n, i) => (
           <div key={i} className="border border-border rounded-lg p-5 bg-muted/30">
             {n.label && (
-              <p className="text-base font-semibold mb-2 text-red-600 dark:text-red-400">
+              <p className="text-base font-semibold mb-2 text-violet-600 dark:text-violet-400">
                 {n.label}
               </p>
             )}
@@ -901,8 +1110,25 @@ function CoreWorkCard({
     <Card className="p-6">
       <div className="mb-3">{headerTop}</div>
       <div>{descriptionEl}</div>
-      {evidenceGrid && <div className="mt-5">{evidenceGrid}</div>}
-      {pillarsGrid && <div className="mt-5">{pillarsGrid}</div>}
+      {work.problemFirst ? (
+        <>
+          {problemBox && <div className="mt-5">{problemBox}</div>}
+          {evidenceGrid && <div className="mt-5">{evidenceGrid}</div>}
+          {metricsGroupBox && <div className="mt-5">{metricsGroupBox}</div>}
+        </>
+      ) : (
+        <>
+          {evidenceGrid && <div className="mt-5">{evidenceGrid}</div>}
+          {metricsGroupBox && <div className="mt-5">{metricsGroupBox}</div>}
+          {problemBox && <div className="mt-5">{problemBox}</div>}
+        </>
+      )}
+      {solutionBox && <div className="mt-5">{solutionBox}</div>}
+      {diagramPillarsRow ? (
+        <div className="mt-5">{diagramPillarsRow}</div>
+      ) : (
+        pillarsGrid && <div className="mt-5">{pillarsGrid}</div>
+      )}
       {notesBlock && <div className="mt-5">{notesBlock}</div>}
       {codeCompareEl && <div className="mt-5">{codeCompareEl}</div>}
       {pairCodeAndProcess ? (
@@ -1163,7 +1389,9 @@ export default function ProjectDetailClient({ id }: { id: string }) {
             <TabsContent value="overview" className="space-y-8 mt-6">
               {project.heroImage && (
                 <figure
-                  className="overflow-hidden rounded-xl border border-border bg-card cursor-zoom-in hover:shadow-lg transition-shadow"
+                  className={`overflow-hidden rounded-xl border border-border bg-card cursor-zoom-in hover:shadow-lg transition-shadow ${
+                    project.id === "bookgroo" ? "max-w-2xl mx-auto" : ""
+                  }`}
                   onClick={() => openLightbox([project.heroImage!], 0)}
                 >
                   <img src={project.heroImage} alt={`${project.title} 시스템 구조`} className="w-full" />
@@ -1199,15 +1427,23 @@ export default function ProjectDetailClient({ id }: { id: string }) {
               {project.coreWorks && project.coreWorks.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setActiveTab("core-works")}
+                  onClick={() => {
+                    setActiveTab("core-works")
+                    // 탭 콘텐츠가 마운트/페인트된 뒤 첫 카드로 스크롤
+                    setTimeout(() => {
+                      document
+                        .getElementById("core-work-0")
+                        ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                    }, 0)
+                  }}
                   className="group block w-full cursor-pointer rounded-xl border border-border bg-muted/30 px-6 py-5 text-left transition-colors hover:border-primary/50 hover:bg-muted/60"
                 >
-                  <p className="mb-4 text-[18px] font-bold">이 프로젝트에서 해결한 것</p>
+                  <p className="mb-4 text-[20px] font-bold text-emerald-600 dark:text-emerald-400">이 프로젝트에서 해결한 것</p>
                   <ul>
                     {(project.coreWorks as CoreWork[]).map((work, index) => (
                       <li
                         key={index}
-                        className="border-b border-border/60 py-2 text-[16.5px] last:border-b-0"
+                        className="border-b border-border/60 py-2 text-[18px] last:border-b-0"
                       >
                         <span className="mr-2 text-primary">•</span>
                         {work.title}

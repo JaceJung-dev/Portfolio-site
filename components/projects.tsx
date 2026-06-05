@@ -12,7 +12,7 @@ export const projects = [
     github: "https://github.com/boostcampaitech8/pro-nlp-finalproject-nlp-16",
     type: "AI 챗봇 서비스",
     period: "2026.01.22 - 2026.02.07",
-    teamSize: "4명",
+    teamSize: "5명",
     role: "백엔드 개발 및 LLM 파이프라인 구축 및 데이터 증강",
     overview: "팬덤 소비가 단순 관람을 넘어 '참여'와 '정체성 형성' 중심으로 변화하는 흐름 속에서, 입덕 초기 사용자가 겪는 정보 과잉과 진입 장벽 문제를 해결하기 위해 기획된 서비스입니다.\n\n사용자의 성향과 취향을 대화 기반으로 분석하고, 각 구단 팬 페르소나를 가진 AI들과의 상호작용을 통해 가장 잘 맞는 KBO 리그 팀을 추천합니다. 단순한 팀 선택에 그치지 않고, 선택 이후에도 팬 AI와의 지속적인 대화를 통해 응원 포인트와 팀 서사를 자연스럽게 익히며 소속감을 형성하도록 설계된 입덕 여정 전반을 아우르는 야구 영업 챗봇 서비스입니다.",
     heroImage: "/assets/system-arch-ai2xogsfFbmtEcSWr1ib4S8C9xtUAU.png",
@@ -134,9 +134,19 @@ export const projects = [
         type: "metric",
         tag: "성능 개선",
         subLabel: "RAG 파이프라인",
-        title: "RAG 검색 품질 개선",
+        title: "수집 문서 특성에 맞춘 RAG 검색 품질 최적화",
         description:
           "RAG 파이프라인과 평가 체계를 구축하고, **chunking 전략**·**retrieval 방식**·**stub 제거** 실험을 통해 답변 사실성과 검색 정밀도를 개선했습니다.",
+        problem:
+          "검색에 쓸 문서를 직접 수집했기 때문에 **최적화된 검색 구성(chunk·retrieval·k)을 사전에 알 수 없었습니다**. 또한 세부적인 정보를 질문했을 때 정확도가 떨어졌습니다. Grid search 실험으로 데이터에 맞는 검색 구성을 찾고, 객관적이고 일관된 평가 지표를 구성해 **RAG의 성능과 답변 정확도를 개선**해야 했습니다.",
+        imagePlacement: "bottom",
+        images: [
+          {
+            src: "/assets/rag-gridsearch-heatmap.svg",
+            caption:
+              "Grid Search — chunk 구성 × 검색 전략 32조합을 동일 평가셋으로 측정 (Answer Relevancy 포함 3개 지표 중 핵심 2종). 선정: 800 chunk · hybrid · MMR · k=5",
+          },
+        ],
         metrics: [
           { label: "Faithfulness", before: "0.651", after: "0.747", delta: "+14.7%" },
           { label: "Context Precision", before: "0.533", after: "0.664", delta: "+24.7%" },
@@ -173,9 +183,11 @@ export const projects = [
         type: "metric",
         tag: "성능 개선",
         subLabel: "LLM 응답 품질 평가",
-        title: "G-Eval 기반 페르소나 응답 평가",
+        title: "감에 의존하던 프롬프트 개선을 G-Eval 기반 정량 평가와 정성 분석으로 개선",
         description:
-          "**user case · edge case 평가셋**과 **6개 평가 rubric**을 구성해 프롬프트 v1 / v2의 응답 품질을 항목별로 비교했습니다.",
+          "**user case · edge case** 평가셋으로 정성 분석 기준을 잡고, **6개 평가 rubric 기반 G-Eval**로 정량 지표를 구성했습니다. 이 둘을 바탕으로 프롬프트를 반복 개선했습니다.",
+        problem:
+          "친근감을 주려고 프롬프트에 여러 가이드라인을 넣었지만, **감에 의존해 수정하다 보니 바뀐 프롬프트가 실제로 효과적인지 확인할 수 없었습니다**. 게다가 답변이 부실하거나 페르소나가 무너지는 경험은 사용자에게 치명적이라, 먼저 edge·실패 케이스를 구조화하고 이를 근거로 프롬프트를 구성할 필요가 있었습니다. RAG와 마찬가지로 **객관적이고 일관된 평가 지표로 응답 품질을 측정·개선**해야 했습니다.",
         wideImage: true,
         metrics: [
           { label: "G-Eval Total", before: "0.71", after: "0.79", delta: "+11.3%" },
@@ -230,9 +242,11 @@ export const projects = [
         type: "feature",
         tag: "기능 개선",
         subLabel: "멀티 페르소나 메모리 제어",
-        title: "단일 세션 내 발화 주체 혼동 완화",
+        title: "멀티 페르소나 환경에서 발화자 혼선을 대화 상태 관리로 해결",
         description:
-          "하나의 채팅방에서 여러 팀 팬 페르소나가 번갈아 발언할 때, 현재 발화자는 **프롬프트로 주입**하고 완료된 응답은 **state에 태깅**해 저장했습니다.",
+          "하나의 채팅방에서 여러 팀 팬 페르소나가 번갈아 발언합니다. 각 페르소나의 정체성은 **팀별 시스템 프롬프트**로 정의하고, 응답이 끝나면 **checkpointer에 접근해 해당 응답에 발화자 태그를 붙여** 저장했습니다.",
+        problem:
+          "서로 다른 팀 팬 페르소나가 한 세션에서 저마다 나를 자기 팀으로 영업하는 경험이 이 서비스의 매력입니다. 그런데 페르소나가 번갈아 발언하다 보면 **직전 발화자의 정체성이 다음 페르소나로 새어 들어가** 페르소나가 무너졌습니다. 서비스의 매력과 정체성을 해치므로 **발화 주체를 정확히 분리**하는 것이 중요했습니다.",
         pillars: [
           {
             name: "Dynamic Prompt",
@@ -569,12 +583,12 @@ const tempSessionId = generateUUID();`,
     id: "csat-solver",
     title: "CSAT-Solver",
     description: "대학수학능력시험 유형 문제 해결 AI 모델 설계",
-    image: "/assets/8gi-zoom-bg-nlp-znCX07LvFY0tCRKVQgYtC1HFWw8SwD.png",
+    image: "/assets/csat-solver_banner.png",
     tags: ["Python", "PyTorch", "Transformers", "Hydra-core", "llama.cpp", "Pandas"],
     github: "https://github.com/boostcampaitech8/pro-nlp-generationfornlp-nlp-16",
     type: "AI/ML 프로젝트",
     period: "2025.12.17 - 2026.01.06",
-    teamSize: "4명",
+    teamSize: "5명",
     role: "LLM 파이프라인 설계 및 데이터 증강",
     overview: "CSAT-Solver는 네이버 커넥트재단의 컴페티션 형태로 진행된 프로젝트로, 대한민국 대학수학능력시험(CSAT) 유형의 문제를 해결하는 AI 모델을 설계하는 것을 목표로 합니다. 본 프로젝트에서 해결하고자 한 핵심 문제는, GPT·Claude·Gemini와 같은 초대형 모델이 아닌 상대적으로 작은 규모의 언어 모델(Small / Medium LLM)만으로도 CSAT형 문제를 얼마나 효과적으로 풀어낼 수 있는가였습니다. CSAT-Solver는 단순한 모델 성능 비교를 넘어, 수능이라는 시험에 최적화된 AI 모델을 설계할 수 있는가에 대한 실험이자 지속적인 학습의 과정, 그리고 도전입니다.",
     heroImage: "/assets/csat-pipeline.svg",
@@ -635,7 +649,9 @@ const tempSessionId = generateUUID();`,
         subLabel: "학습 데이터 증강",
         title: "수능 도메인 분포에 맞춘 LLM 기반 학습 데이터 증강",
         description:
-          "주어진 데이터에서 **사회 영역·<보기>·순서/부정형 문항 부족**을 확인하고, **LLM 기반 문항 증강과 SFT**로 Macro F1을 개선했습니다.",
+          "**LLM 기반 문항 증강과 SFT**로 부족한 유형·도메인을 채워 Macro F1을 개선했습니다.",
+        problem:
+          "학습 데이터의 **품질과 양이 모두 부족**했습니다. 사회 영역이 국어의 약 2배로 많고 부정형·순서 배열·빈칸 채우기 등 수능형 문제의 유형도 부족했습니다. 그래서 **수능 도메인 분포에 맞춰 양질의 학습 데이터를 확보·증강**해야 했습니다.",
         image: "/assets/data_aug_performance.png",
         imagePlacement: "bottom",
         metrics: [
@@ -680,7 +696,7 @@ const tempSessionId = generateUUID();`,
         layout: "horizontal",
         tag: "기능 구현",
         subLabel: "MoA 추론 파이프라인",
-        title: "MoA 기반 추론 안정성 개선",
+        title: "제한된 GPU 환경에서 추론 안정성을 MoA 경량 구조로 개선",
         description:
           "**Provider**가 풀이 힌트를 생성하고, **Aggregator**가 힌트 조합별로 병렬 추론한 뒤, **Vote**로 최종 답안을 선택하는 MoA 추론 구조를 설계했습니다.",
         image: "/assets/moa_pipeline.svg",
@@ -717,7 +733,9 @@ const tempSessionId = generateUUID();`,
         subLabel: "실험 관리 시스템",
         title: "ML 실험 재현성을 위한 Git 브랜치 컨벤션 설계",
         description:
-          "성공한 실험만 본 코드에 반영되는 구조에서는 실패 실험, 파라미터, 재현 정보가 사라지기 쉬웠습니다. 이를 해결하기 위해 일반 git flow를 유지하되, **experiment/* 트랙을 추가**한 팀 브랜치 컨벤션을 설계했습니다.",
+          "일반 git flow를 유지하되, **experiment/* 트랙을 추가**한 팀 브랜치 컨벤션을 설계했습니다.",
+        problem:
+          "이전 프로젝트에서는 성능이 개선되지 않은 실험은 보존되지 않았습니다. 하지만 실패한 실험(negative result)도 **무엇이 통하지 않았는지 알려주는 자산**이라 남길 가치가 있고, 성공한 결과라도 이를 신뢰하려면 코드·파라미터가 남아 **그대로 재현**할 수 있어야 했습니다. 나아가 **기능 구현과 실험이 뒤섞이지 않도록** 둘을 명확히 분리할 필요도 있었습니다.",
         pillars: [
           {
             name: "Negative Result 보존",
@@ -752,11 +770,6 @@ experiment/<topic>
           {
             label: "컨벤션 도입 과정",
             steps: [
-              {
-                title: "문제 정의",
-                detail:
-                  "성공 실험만 본 코드에 반영되며, 실패 실험과 재현 정보가 사라짐",
-              },
               {
                 title: "Semantic Versioning 검토",
                 detail:
@@ -927,16 +940,16 @@ if getattr(qc, "act_group_aware", False):
     id: "odqa",
     title: "ODQA: Open Domain Question Answering",
     description: "사전에 구축되어있는 Knowledge resource에서 질문에 답하는 모델 설계",
-    image: "/assets/8gi-zoom-bg-nlp-znCX07LvFY0tCRKVQgYtC1HFWw8SwD.png",
+    image: "/assets/odqa_banner.png",
     tags: ["Python", "PyTorch", "Transformers", "Hydra-core", "Pandas"],
     github: "https://github.com/boostcampaitech8/pro-nlp-mrc-nlp-16",
     type: "AI/ML 프로젝트",
     period: "2025.12.03 - 2025.12.11",
-    teamSize: "4명",
+    teamSize: "5명",
     role: "Retriever 및 Reader 모델 설계, 데이터 전처리 파이프라인 구축",
-    overview: "Open-Domain Question Answering(ODQA)은 별도의 지문 없이 사전 구축된 Knowledge resource에서 질문에 대답할 수 있는 문서를 검색하고 답변을 추출하는 고난이도 QA 과제입니다. 본 프로젝트에서는 질문과 관련된 문서를 찾는 Retriever 단계와 해당 문서에서 정답을 추출하는 Reader 단계로 구성된 Two-stage 파이프라인을 설계했습니다. 두 단계를 효과적으로 통합하여, 다양한 도메인의 질문에 답변할 수 있는 ODQA 시스템을 구축했습니다.",
+    overview: "Open-Domain Question Answering(ODQA)은 별도의 지문 없이 사전 구축된 Knowledge resource에서 질문에 대답할 수 있는 문서를 검색하고 답변을 추출하는 고난이도 QA 과제입니다. 본 프로젝트에서는 질문과 관련된 문서를 찾는 Retriever 단계와 해당 문서에서 정답을 추출하는 Reader 단계로 구성된 2-stage 파이프라인을 설계했습니다. 두 단계를 효과적으로 통합하여, 다양한 도메인의 질문에 답변할 수 있는 ODQA 시스템을 구축했습니다.",
     heroImage: "/assets/odqa-pipeline.svg",
-    heroCaption: "Retriever–Reader Two-stage 파이프라인",
+    heroCaption: "Retriever–Reader 2-stage 파이프라인",
     keyMetrics: [
       { label: "정답 일치율 (EM)", value: "+3.34" },
       { label: "토큰 단위 정답률 (F1)", value: "+4.36" },
@@ -965,7 +978,7 @@ if getattr(qc, "act_group_aware", False):
         items: [
           "klue/BERT-base, klue/RoBERTa-base, klue/RoBERTa-large 모델 비교 및 선정",
           "Sliding Window + doc_stride 조합 최적화 (max_seq_length x doc_stride grid search)",
-          "Answer-Aware Window(Two-stage Reader) 설계 및 구현",
+          "2-stage Reader 설계 및 구현",
           "학습-추론 환경 일치(Train-Test Alignment) 실험",
         ],
       },
@@ -983,21 +996,22 @@ if getattr(qc, "act_group_aware", False):
         type: "metric",
         tag: "성능 개선",
         subLabel: "Reader 입력 처리",
-        title: "Long Context 최적화",
+        title: "입력 한도 초과에 따른 정답 손실을 Sliding Window로 완화",
         description:
-          "학습 데이터의 **58.7%가 BERT 입력 길이 제한을 초과**하는 문제를 확인하고, **문서 분할·stride 전략**을 조정해 긴 문맥 내 정답 손실을 줄였습니다.",
+          "**문서 분할·stride 전략**을 조정해 긴 문맥 내 정답 손실을 줄였습니다.",
+        problem:
+          "Reader로 쓰는 BERT 계열 모델은 입력이 **512 토큰으로 제한**되는데, 학습 데이터의 **58.7%가 이를 초과**했습니다. 문서를 그대로 잘라내면 **후반부 정답이 함께 잘려 나가** 정답을 놓쳤습니다. 정답 손실 없이 긴 문서를 다루려면 **sliding window로 나눠 읽되 분할 길이와 stride를 데이터에 맞게** 찾아야 했습니다.",
         metrics: [
           { label: "EM", before: "55.00", after: "57.92", delta: "+2.92" },
           { label: "F1", before: "64.69", after: "67.55", delta: "+2.86" },
         ],
         pillars: [
           {
-            name: "문제 근거",
-            lines: ["58.7% 입력 길이 제한 초과", "정답 위치가 후반부에 분포"],
-          },
-          {
             name: "최적화 전략",
-            lines: ["max_seq_length / stride 조합", "grid search로 최적 조건 탐색"],
+            lines: [
+              "max_seq_length · doc_stride 조합을 grid search",
+              "정답 손실과 문맥량의 균형점 선정 (384 / 192)",
+            ],
           },
         ],
         images: [
@@ -1012,20 +1026,23 @@ if getattr(qc, "act_group_aware", False):
         type: "metric",
         tag: "성능 개선",
         subLabel: "Reader 아키텍처",
-        title: "Answer-Aware Window 설계",
+        title: "윈도우 경계에서 놓치던 정답을 다시 읽는 2-stage Reader",
         description:
-          "**Sliding window만으로는** 윈도우 경계에 정답이 걸릴 때 앞뒤 문맥이 비대칭적으로 잘리고, 긴 문서에선 불필요한 문맥 비율이 높아지는 한계가 있었습니다. 정답 후보를 먼저 탐색한 뒤 후보 중심으로 윈도우를 재구성하는 **Two-stage Reader**를 설계했습니다.",
+          "정답 후보를 먼저 탐색한 뒤 후보 중심으로 윈도우를 재구성하는 **2-stage Reader**를 설계했습니다.",
+        problem:
+          "앞선 sliding window 최적화로 성능을 끌어올렸지만, **고정 크기 윈도우를 일정 간격으로 나누는 방식** 자체의 구조적 한계는 그대로 남았습니다.\n• **맥락 불균형**: 정답이 윈도우 경계에 걸리면 앞뒤 맥락이 비대칭적으로 제공됩니다.\n• **Irrelevant 문맥 증가**: 문서가 길수록 윈도우 수가 늘어 정답 주변 핵심 문맥의 비율이 줄고, start/end 확률 분포가 희석됩니다.\n• **Negative chunk 누적**: 정답이 후반부에 있으면 앞선 negative chunk들을 거치며 정답 chunk의 logit이 상대적으로 낮아집니다.",
         metrics: [
           { label: "EM", before: "57.08", after: "60.42", delta: "+3.34" },
           { label: "F1", before: "64.60", after: "68.96", delta: "+4.36" },
         ],
+        diagram: { src: "/assets/two-stage-window.svg", title: "2-stage 동작 방식" },
         pillars: [
           {
-            name: "Stage 1: 후보 탐색",
-            lines: ["Sliding window로 전체 문서 스캔", "정답 가능 영역 식별"],
+            name: "후보 탐색",
+            lines: ["Sliding window로 전체 문서 스캔", "정답 후보 영역 선별"],
           },
           {
-            name: "Stage 2: 정밀 추론",
+            name: "정밀 추론",
             lines: ["후보 중심 윈도우 재구성", "정답 주변 문맥 정밀 추론"],
           },
         ],
@@ -1033,13 +1050,13 @@ if getattr(qc, "act_group_aware", False):
           {
             src: "/assets/two_stage_result.png",
             caption:
-              "Retriever × Reader 조합 비교 — BM25 + Reranker + Two-stage에서 EM 60.42 / F1 68.96 최고 성능",
+              "Retriever × Reader 조합 비교 — BM25 + Reranker + 2-stage에서 EM 60.42 / F1 68.96 최고 성능",
           },
         ],
         notes: [
           {
             label: "Reranker 시너지",
-            body: "**Reranker를 적용한 Retriever와 함께 사용할 때 효과가 더 컸습니다.**\nReranker가 정답 포함 문서를 상위로 올리면, Two-stage Reader가 더 좋은 후보 영역을 다시 읽을 수 있었기 때문입니다.",
+            body: "**Reranker를 적용한 Retriever와 함께 사용할 때 효과가 더 컸습니다.**\nReranker가 정답 포함 문서를 상위로 올리면, 2-stage Reader가 더 좋은 후보 영역을 다시 읽을 수 있었기 때문입니다.",
           },
         ],
       },
@@ -1047,43 +1064,35 @@ if getattr(qc, "act_group_aware", False):
         type: "feature",
         tag: "기능 구현",
         subLabel: "Retriever 평가 시스템",
-        title: "Retriever 성능 비교 체계 구축",
+        title: "Retriever·토크나이저 성능 비교와 최적의 구성 선정",
         description:
-          "팀원들이 **BM25, TF-IDF, Dense, Hybrid Retriever**를 각각 구현하면서 최종 검색 전략을 선택하기 위한 **공통 평가 기준**이 필요했습니다. 동일 데이터셋에서 **Recall@K, MRR**을 기준으로 Retriever 성능을 통합 비교하는 평가 시스템을 구축하고, 실험 결과를 바탕으로 팀이 납득할 수 있는 최종 Retriever를 결정했습니다.\n\n또한 한국어는 **조사와 어미가 발달한 교착어**라 공백 단위 분절이 의미 단위와 일치하지 않는 경우가 많았습니다. 이에 tokenizer 6종을 비교해 검색 성능 변화를 분석했고, **서브워드 단위 분절**이 가장 안정적인 검색 품질을 보이는 것을 확인했습니다.",
-        metrics: [
-          {
-            label: "Retriever MRR",
-            comparator: "<",
-            lineup: [
-              "Dense 29.37%",
-              "TFIDF 40.79%",
-              "BM25 68.00%",
-              "Hybrid(BM25+Dense) 69.68%",
-            ],
-          },
-          {
-            label: "BM25 토크나이저 MRR",
-            comparator: "<",
-            lineup: [
-              "글자 단위 1.79%",
-              "띄어쓰기 단위 12.19%",
-              "형태소·내용어 37.18%",
-              "형태소 40.25%",
-              "형태소·명사 40.80%",
-              "서브워드 68.00%",
-            ],
-          },
-        ],
+          "동일 데이터셋에서 **Recall@K · MRR**로 Retriever를 통합 비교하는 평가 체계를 구축해 팀의 최종 Retriever를 결정했고, BM25에서는 **tokenizer 6종 비교**로 **서브워드 단위 분절**이 가장 안정적인 검색 품질을 내는 것을 확인했습니다.",
+        problem:
+          "1. 팀원들이 BM25·TF-IDF·Dense·Hybrid를 각자 맡아 구현했지만, **공통된 평가 체계 없이** test set을 컴페티션에 제출해 public score로만 성능을 확인하고 있었습니다. 이 방식으로는 **Retriever별 성능 차이를 분리해 볼 수 없고**, 최종 결과가 예상과 어긋났을 때 원인을 짚기도 어려웠습니다.\n2. 제가 맡은 **BM25**는 한국어 데이터를 다루는 만큼 **tokenizer 선택에 따라 검색 성능이 크게 달라질 수 있어**, 이를 정량 평가해 최적 설정을 찾아야 했습니다.",
+        problemFirst: true,
+        metricsBox: {
+          title: "정량 평가 결과 (MRR)",
+          items: [
+            {
+              label: "Retriever",
+              body: "==Hybrid 69.68%== 가 가장 높았고 **BM25 68.00%** 와 근소차 — 두 방식이 TFIDF·Dense(40%↓)를 크게 앞섰습니다.",
+            },
+            {
+              label: "BM25 토크나이저",
+              body: "==서브워드 68.00%== 가 최고 — 형태소 계열(~40%) 대비 ==+27%p==, 글자 단위(1.79%)는 사실상 무력했습니다.",
+            },
+          ],
+        },
         images: [
           {
             src: "/assets/bm25_tokenizer_comparison.png",
             caption:
-              "BM25 토크나이저 6종 비교 — 서브워드(klue_roberta)가 Recall@K · MRR 모두에서 큰 격차로 우위",
+              "토크나이저 6종의 Recall@K 곡선 — 서브워드(klue_roberta)가 모든 K에서 큰 격차로 우위 (오른쪽 MRR은 위 막대의 실제 실험 그래프)",
           },
           {
             src: "/assets/retriever_comparison.png",
             caption:
-              "최종 4개 Retriever 비교 — Hybrid 69.68% / BM25-klue_roberta 68.00% / TFIDF 40.79% / Dense 29.37%",
+              "4개 Retriever의 Recall@K 곡선 — Hybrid·BM25 상위, Dense 하위 (오른쪽 MRR은 위 막대와 동일한 실제 실험 그래프)",
           },
         ],
       },
@@ -1099,7 +1108,7 @@ if getattr(qc, "act_group_aware", False):
         assignees: "정*웅",
         symptom: "• 전처리 단계에서 답변 중심 context window를 적용하여 학습 시에는 정상 동작\n• 그러나 추론(inference) 시에는 정답 위치를 알 수 없어 동일한 전처리 적용 불가\n• 학습 때는 답변 주변만 잘라낸 짧은 context를 입력으로 보고, 추론 때는 전체 context를 입력으로 보게 되어 입력 분포 불일치(Train-Test Mismatch) 발생",
         cause: "• preprocessor.py의 _get_optimal_context_window()가 answer_start를 기반으로 context를 자르는 로직\n• 이 값은 학습 데이터에만 존재하며, 추론 시에는 정답 위치를 모르기 때문에 해당 로직 자체를 사용할 수 없음\n• 근본적으로 전처리 단계에서 답변 위치에 의존하는 설계 자체가 추론과 양립 불가능",
-        solution: "• 전처리 단계의 answer-aware 로직을 전부 제거\n• 추론 시에도 동작 가능한 Two-stage Reader 아키텍처로 전면 재설계\n  - Stage 1: Sliding window로 전체 문서를 스캔하여 정답 후보 위치를 먼저 탐색\n  - Stage 2: Stage 1이 찾은 후보 위치를 중심으로 token-level window를 재구성하여 정밀 추론",
+        solution: "• 전처리 단계의 answer-aware 로직을 전부 제거\n• 추론 시에도 동작 가능한 2-stage Reader 아키텍처로 전면 재설계\n  - Stage 1: Sliding window로 전체 문서를 스캔하여 정답 후보 위치를 먼저 탐색\n  - Stage 2: Stage 1이 찾은 후보 위치를 중심으로 token-level window를 재구성하여 정밀 추론",
         beforeCode: `# src/data/preprocessor.py — 학습 시에만 동작, 추론 시 사용 불가
 class DataPreprocessor:
     def _get_optimal_context_window(self, context, answer_text, answer_start):
@@ -1165,7 +1174,7 @@ class TwoStageReader:
       {
         incidentNumber: "INC-002",
         category: "ML",
-        problem: "Two-stage Reader의 N-best Prediction 누락",
+        problem: "2-stage Reader의 N-best Prediction 누락",
         discoveredDate: "2025.12.11",
         resolvedDate: "2025.12.11",
         assignees: "정*웅",
@@ -1221,7 +1230,7 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
         url: "https://jacejung-dev.github.io/devlog/2025-12-12-ODQA_2/",
       },
       {
-        title: "Answer-Aware Window (Two-stage Reader) 설계와 구현",
+        title: "2-stage Reader 설계와 구현",
         url: "https://jacejung-dev.github.io/devlog/2025-12-13-ODQA_3/",
       },
       {
@@ -1326,9 +1335,11 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
         type: "feature",
         tag: "기능 구현",
         subLabel: "비동기 스트리밍",
-        title: "Django Channels + WebSocket 기반 챗봇 스트리밍",
+        title: "첫 응답까지의 대기를 줄인 WebSocket 토큰 스트리밍",
         description:
-          "Django Channels로 챗봇 응답을 WebSocket 기반으로 스트리밍하고, handshake 단계에서 JWT를 검증하는 middleware를 직접 구현했습니다. 이를 통해 인증된 사용자 연결을 유지하면서 토큰 단위 응답 전송이 가능하도록 구성했습니다.",
+          "Django Channels로 챗봇 응답을 WebSocket 기반으로 스트리밍하고, handshake 단계에서 JWT를 검증하는 middleware를 직접 구현했습니다. 이를 통해 인증된 사용자 연결을 유지하면서 토큰 단위 응답 전송이 가능합니다.",
+        problem:
+          "1. 기존 **동기(WSGI) 방식**은 **답변 전체를 생성한 뒤에야** 응답을 반환해 체감 대기가 길었고, 응답이 끝날 때까지 워커가 점유돼 **여러 사용자를 동시에 응대하기 어려웠습니다.**\n2. 토큰 스트리밍을 위해 **WebSocket(ASGI)** 으로 전환하면 기존 **DRF의 HTTP 인증이 적용되지 않아**, handshake 단계에서 **JWT 검증 미들웨어를 직접 구현**해야 했습니다.",
         metrics: [
           {
             label: "평균 응답 지연",
@@ -1394,9 +1405,12 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
         type: "feature",
         tag: "기능 구현",
         subLabel: "질의 분류 정확도",
-        title: "LLM Agent + 규칙 기반 하이브리드 의도 분류",
+        title: "LLM 단독으로 흔들리던 의도 분류를 규칙으로 안정화한 하이브리드 분류기",
         description:
           "LLM 단독 분류의 흔들림을 잡기 위해 **키워드 가중치 보정**과 **질문 유형 패턴 매칭**을 더해, 같은 질문에는 같은 답변이 나가도록 견고한 의도 분류기를 만들었습니다.",
+        problem:
+          "사용자 입력은 **의도에 따라 처리 경로가 완전히 갈립니다.**\n• 무관한 발화 → 방어·차단\n• 보고서 요청 → 보고서 생성 워크플로우\n• 폭넓은 추천 → 요약형 RAG 응답\n• 특정 정책 세부 질문 → 정밀 정보가 담긴 vectorDB\n**의도 분류는 파이프라인의 관문**으로, 한 번 어긋나면 엉뚱한 처리로 이어지는데, LLM 단독 분류는 **한국어의 미묘한 뉘앙스를 놓쳐** 같은 질문에도 결과가 흔들렸습니다.",
+        pillarsTitle: "LLM 기반 + 규칙 기반의 하이브리드 분류 시스템",
         pillars: [
           {
             name: "AI 1차 의도 분류",
@@ -1414,33 +1428,22 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
         image: "/assets/ainfo-classification-pipeline.svg",
         processes: [
           {
-            label: "문제 상황",
-            numbered: false,
-            steps: [
-              {
-                title: "LLM 단독 분류의 한계",
-                detail:
-                  "같은 입력에도 분류 결과가 달라지거나,\n한국어의 미묘한 뉘앙스를 잘 잡지 못함\n(예: '주거지원 정책 있어?' → 정책 목록 안내가 적절하지만 상세 안내로 오분류)",
-              },
-            ],
-          },
-          {
             label: "분류 흐름",
             steps: [
               {
                 title: "AI 1차 의도 추정",
                 detail:
-                  "사용자가 무엇을 물었는지 AI가 추측 →\n잡담 · 정책 전반 · 정책 상세 · 맞춤 추천 · 보고서 요청 등\n6가지 의도 중 하나로 후보 선택",
+                  "사용자가 무엇을 물었는지 AI가 추측 →\n잡담 · 정책 전반 · 정책 상세 · 맞춤 추천 · 보고서 요청 등 6가지 의도 중 하나로 후보 선택",
               },
               {
                 title: "키워드 가중치 보정",
                 detail:
-                  "사전에 정의한 키워드가 입력에 얼마나 들어있는지 점수로 계산해\nAI가 잘못 짚은 케이스를 보정",
+                  "사전에 정의한 키워드가 입력에 얼마나 들어 있는지 점수로 계산해\nAI가 잘못 짚은 케이스를 보정",
               },
               {
                 title: "질문 유형 패턴 매칭",
                 detail:
-                  "'어떤 게 있어?'(목록형) vs '어떻게 신청해?'(상세형) 같은\n사전 정의 패턴으로 한 번 더 구분",
+                  "'어떤 게 있어?'(목록형) vs '어떻게 신청해?'(상세형)\n사전 정의 패턴으로 한 번 더 구분",
               },
               {
                 title: "최종 의도 확정 후 답변 분기",
@@ -2558,11 +2561,68 @@ python vector_store/load_data.py`,
       {
         type: "feature",
         tag: "기능 구현",
+        subLabel: "도서 추천 에이전트",
+        title: "LangChain 기반 도서 추천 챗봇 파이프라인 설계",
+        description:
+          "사용자 입력을 의도별로 분류·라우팅한 뒤 RAG·LLM 추천을 병렬로 수행하고 결과를 한곳에서 취합하는 도서 추천 챗봇 파이프라인을 LangChain으로 설계·구현했습니다.",
+        image: "/assets/bookgroo_chatbot_logic-uWgjycqDhvf3ZoMj77iqdcTo0mHUwL.webp",
+        problem:
+          "사용자 입력을 받아 추천까지 이어지는 추천 파이프라인을 직접 설계해야 했고, 입력에 장르 키워드가 담길 때와 막연히 추천만 요청할 때를 모두 자연스럽게 처리해야 했습니다.",
+        solution:
+          "모든 경로에서 RAG로 도서를 검색하며, 검색 기준만 입력 상황에 따라 달라집니다.\n• 사용자 입력에 장르적 키워드가 있으면 → 해당 키워드를 중심으로 검색\n• 키워드가 없으면 → 가입 시 받은 선호 장르를 기준으로 검색",
+        solutionLabel: "설계 구조",
+        pillars: [
+          {
+            name: "Intent 분류",
+            lines: ["off_topic", "no_keyword", "yes_keyword"],
+          },
+          {
+            name: "Query Routing",
+            lines: ["카테고리별", "응답 방식 분기"],
+          },
+          {
+            name: "Dual Recommendation",
+            lines: ["RAG · LLM 추천", "병렬 수행"],
+          },
+          {
+            name: "결과 취합",
+            lines: ["중복 제거 +", "출처(RAG / LLM) 표기"],
+          },
+        ],
+      },
+      {
+        type: "feature",
+        tag: "기능 구현",
         subLabel: "할루시네이션 감소",
-        title: "3-Model 분리로 RAG·LLM 출처 정확도 개선",
+        title: "RAG·LLM 출처 혼동을 3-Model 책임 분리로 해결",
         description:
           "단일 모델이 RAG·LLM 출처를 혼동하던 문제를 RAG 추천(Model A) · LLM 추천(Model B) · 결과 취합(Model C)으로 책임을 분리해 구조를 재설계했습니다.",
-        image: "/assets/bookgroo_chatbot_logic-uWgjycqDhvf3ZoMj77iqdcTo0mHUwL.webp",
+        problem:
+          "도서 추천을 한 모델이 **카테고리 분류 · RAG 검색 · LLM 추천 · 결과 통합**을 한꺼번에 맡다 보니, 복잡한 프롬프트 속에서 **정보의 출처를 추적하지 못했습니다.**\n• LLM 자체 지식으로 만든 답을 **RAG 출처로 잘못 표시**\n• RAG 데이터가 없는 책을 **RAG 근거가 있는 것처럼 표기**\n정확하지 않은 출처는 사용자 신뢰를 떨어뜨리는 문제를 가지고 있습니다.",
+        problemFirst: true,
+        codeCompare: {
+          title: "단일 프롬프트 → 3-Model 책임 분리",
+          language: "python",
+          before: `# 단일 모델 — 분류·검색·추천·출처표시를 한 프롬프트가 전부 처리
+prompt = ChatPromptTemplate.from_template("""
+    1. 입력을 off_topic / no_keyword / yes_keyword로 분류
+    2. 카테고리별 응답 방식 결정
+    3. LLM 지식 + ChromaDB retrieve 1건을 함께 추천
+    4. 각 책의 출처(LLM / RAG)까지 직접 표시
+""")
+chain = prompt | llm   # 출처 추적이 한 모델 안에서 뒤섞임`,
+          after: `# Model A — RAG 기반 추천만 담당
+chain_A = prompt_A | llm
+result_RAG = chain_A.invoke({"context": context, "user_question": q}).content
+
+# Model B — LLM 기반 추천만 담당
+chain_B = prompt_B | llm
+result_LLM = chain_B.invoke({"user_question": q}).content
+
+# Model C — 두 결과 취합 + 중복 제거만 담당
+chain_C = prompt_C | llm
+final = chain_C.invoke({"result_RAG": result_RAG, "result_LLM": result_LLM}).content`,
+        },
         capabilities: [
           "Model A: RAG 기반 추천",
           "Model B: LLM 기반 추천",
@@ -2575,9 +2635,12 @@ python vector_store/load_data.py`,
         type: "feature",
         tag: "기능 구현",
         subLabel: "데이터 파이프라인 / 배포",
-        title: "신간 도서 RAG 데이터 구축 및 환경 호환성 확보",
+        title: "신간 정보 공백을 직접 구축한 RAG 데이터로 보완",
         description:
           "YES24 신간 도서 크롤러로 RAG 데이터를 직접 수집하고, 상대경로 기반 VectorDB가 Local/Server 환경에서 다르게 해석되던 문제를 절대 경로 기반으로 정리했습니다.",
+        problem:
+          "1. 추천 대상인 **신간 도서**는 LLM 학습 시점 이후의 정보라 모델이 알지 못해, **RAG로 채울 데이터를 직접 수집**해야 했습니다.\n2. 구축한 VectorDB를 **상대경로(./book_DB)** 로 불러오다 보니 **실행 위치에 따라 경로가 다르게 해석**돼, Local에서는 되던 조회가 **배포 서버에서는 RAG 데이터를 찾지 못했습니다.**",
+        problemFirst: true,
         codeCompare: {
           title: "VectorDB 경로: 상대경로 → 절대경로",
           language: "python",
@@ -2817,6 +2880,13 @@ return final_result
   },
 ]
 
+function formatPeriodRange(period: string) {
+  return period
+    .split(" - ")
+    .map((date) => date.slice(0, 7))
+    .join(" - ")
+}
+
 export function Projects() {
   return (
     <section id="projects" className="py-20 px-4 bg-muted/30">
@@ -2834,7 +2904,12 @@ export function Projects() {
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-[18px]">{project.title}</CardTitle>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <CardTitle className="text-[19px]">{project.title}</CardTitle>
+                    <p className="shrink-0 text-[14px] text-foreground/70">
+                      {formatPeriodRange(project.period)}
+                    </p>
+                  </div>
                   <CardDescription className="text-[16px]">{project.description}</CardDescription>
                 </CardHeader>
                 <CardContent>

@@ -1,107 +1,116 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 850" font-family="Pretendard, system-ui, -apple-system, 'Segoe UI', 'Noto Sans KR', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 945" font-family="ui-sans-serif, system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', sans-serif">
   <style>
-    .t-main { fill: #1E5A60; font-weight: 700; }
-    .t-sub { fill: #4A7A80; }
-    .t-accent { fill: #2A7177; font-weight: 700; letter-spacing: 1px; }
-    .line { stroke: #5A9BA0; stroke-width: 2; fill: none; }
-    .box { fill: #E8F2F3; stroke: #5A9BA0; stroke-width: 1.5; }
-    .box-strong { fill: #B6DCDF; stroke: #2A7177; stroke-width: 2; }
-    .arrow { fill: #5A9BA0; }
+    text { dominant-baseline: middle; }
+    .title { font-size: 20px; font-weight: 700; }
+    .heading { font-size: 18px; font-weight: 700; fill: #171717; }
+    .body { font-size: 17px; fill: #171717; }
+    .muted { font-size: 14.5px; fill: #737373; }
+    .label { font-size: 14.5px; font-weight: 700; letter-spacing: 0.06em; }
+    .pink-fg { fill: #db2777; }
+    .blue-fg { fill: #2563eb; }
+    .title-fg { fill: #db2777; }
+    .box { fill: #f5f5f5; stroke: #d4d4d4; stroke-width: 1; }
+    .stroke-pink { fill: none; stroke: #f9a8d4; stroke-width: 1.5; }
+    .stroke-blue { fill: none; stroke: #93c5fd; stroke-width: 1.5; }
+    .fill-pink { fill: #fdf2f8; stroke: none; }
+    .fill-blue { fill: #eff6ff; stroke: none; }
+    .vote-bg { fill: #171717; }
+    .vote-title { font-size: 19px; font-weight: 700; fill: #fb7185; }
+    .vote-text { font-size: 16px; fill: #fafafa; }
+    .line { fill: none; stroke: #737373; stroke-width: 1.2; }
+    .arrow-fill { fill: #737373; }
+
     @media (prefers-color-scheme: dark) {
-      .t-main { fill: #9DDDE2; }
-      .t-sub { fill: #6FB5BB; }
-      .t-accent { fill: #9DDDE2; }
-      .line { stroke: #6FB5BB; }
-      .box { fill: rgba(111, 181, 187, 0.12); stroke: #6FB5BB; }
-      .box-strong { fill: rgba(111, 181, 187, 0.28); stroke: #9DDDE2; }
-      .arrow { fill: #6FB5BB; }
+      .heading { fill: #fafafa; }
+      .body { fill: #fafafa; }
+      .muted { fill: #a3a3a3; }
+      .box { fill: #262626; stroke: #525252; }
+      .stroke-pink { stroke: #f472b6; }
+      .stroke-blue { stroke: #60a5fa; }
+      .fill-pink { fill: rgba(244,114,182,0.12); }
+      .fill-blue { fill: rgba(96,165,250,0.12); }
+      .vote-bg { fill: #fafafa; }
+      .vote-title { fill: #be185d; }
+      .vote-text { fill: #171717; }
+      .line { stroke: #a3a3a3; }
+      .arrow-fill { fill: #a3a3a3; }
+      .pink-fg { fill: #f472b6; }
+      .blue-fg { fill: #60a5fa; }
+      .title-fg { fill: #f472b6; }
     }
   </style>
 
-  <!-- 상단 캡션 -->
-  <text x="40" y="30" font-size="16" class="t-accent">하이브리드 의도 분류 파이프라인</text>
-  <line x1="40" y1="42" x2="350" y2="42" class="line" />
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill"/>
+    </marker>
+  </defs>
+
+  <text x="20" y="30" class="title title-fg">하이브리드 의도 분류 파이프라인</text>
 
   <!-- 1. 사용자 입력 -->
-  <rect x="120" y="60" width="360" height="50" rx="8" class="box" />
-  <text x="300" y="92" text-anchor="middle" font-size="18" class="t-main">사용자 입력</text>
+  <rect x="270" y="58" width="140" height="40" rx="6" class="box"/>
+  <text x="340" y="78" text-anchor="middle" class="body">사용자 입력</text>
 
-  <line x1="300" y1="110" x2="300" y2="140" class="line" />
-  <polygon points="295,140 305,140 300,150" class="arrow" />
+  <line x1="340" y1="98" x2="340" y2="150" class="line" marker-end="url(#arrowhead)"/>
 
-  <!-- 2. AI 1차 의도 분류 -->
-  <rect x="120" y="150" width="360" height="95" rx="8" class="box" />
-  <text x="300" y="178" text-anchor="middle" font-size="18" class="t-main">AI 1차 의도 분류</text>
-  <text x="300" y="202" text-anchor="middle" font-size="13" class="t-sub">6가지 의도 후보 중 하나 선택</text>
-  <text x="300" y="225" text-anchor="middle" font-size="12" class="t-sub">의도 · 후속 질문 여부 · 검색 키워드 동시 추출</text>
+  <!-- 2. LLM 기반 (BLUE) -->
+  <rect x="70" y="155" width="540" height="120" rx="8" class="stroke-blue"/>
+  <text x="88" y="180" class="label blue-fg">LLM 기반 · AI 1차 분류</text>
+  <text x="88" y="212" class="body">사용자 질문을 6가지 의도 후보 중 하나로 추정</text>
+  <text x="88" y="242" class="muted">의도 · 후속 질문 여부 · 검색 키워드를 동시 추출</text>
 
-  <line x1="300" y1="245" x2="300" y2="275" class="line" />
-  <polygon points="295,275 305,275 300,285" class="arrow" />
+  <line x1="340" y1="275" x2="340" y2="325" class="line" marker-end="url(#arrowhead)"/>
+  <text x="352" y="300" class="muted">1차 추정</text>
 
-  <!-- 3. 규칙 기반 보정 (헤더) -->
-  <rect x="120" y="285" width="360" height="60" rx="8" class="box-strong" />
-  <text x="300" y="313" text-anchor="middle" font-size="18" class="t-main">규칙 기반 보정</text>
-  <text x="300" y="333" text-anchor="middle" font-size="13" class="t-sub">단어 점수 + 질문 유형 패턴</text>
+  <!-- 3. 규칙 기반 보정 (PINK) -->
+  <rect x="70" y="330" width="540" height="185" rx="8" class="stroke-pink"/>
+  <text x="88" y="355" class="label pink-fg">규칙 기반 보정</text>
+  <text x="205" y="355" class="muted">· 사람이 정의한 규칙으로 LLM 분류 보정</text>
 
-  <!-- 분기 트리: 3 → 좌/우 -->
-  <line x1="300" y1="345" x2="300" y2="370" class="line" />
-  <line x1="180" y1="370" x2="420" y2="370" class="line" />
-  <line x1="180" y1="370" x2="180" y2="400" class="line" />
-  <polygon points="175,400 185,400 180,410" class="arrow" />
-  <line x1="420" y1="370" x2="420" y2="400" class="line" />
-  <polygon points="415,400 425,400 420,410" class="arrow" />
+  <rect x="90" y="380" width="240" height="115" rx="6" class="fill-pink"/>
+  <text x="210" y="409" text-anchor="middle" class="label pink-fg">키워드 가중치 보정</text>
+  <text x="210" y="441" text-anchor="middle" class="muted">사전 정의 키워드의</text>
+  <text x="210" y="464" text-anchor="middle" class="muted">등장 빈도로 점수 가중</text>
 
-  <!-- 4. 좌: 키워드 가중치 보정 -->
-  <rect x="80" y="410" width="200" height="80" rx="8" class="box" />
-  <text x="180" y="440" text-anchor="middle" font-size="16" class="t-main">키워드 가중치 보정</text>
-  <text x="180" y="462" text-anchor="middle" font-size="12" class="t-sub">사전 정의 키워드의</text>
-  <text x="180" y="478" text-anchor="middle" font-size="12" class="t-sub">등장 빈도로 점수 가중</text>
+  <rect x="350" y="380" width="240" height="115" rx="6" class="fill-pink"/>
+  <text x="470" y="409" text-anchor="middle" class="label pink-fg">질문 유형 패턴 매칭</text>
+  <text x="470" y="441" text-anchor="middle" class="muted">목록형 '어떤 게 있어?'</text>
+  <text x="470" y="464" text-anchor="middle" class="muted">vs 상세형 '어떻게 신청해?'</text>
 
-  <!-- 5. 우: 질문 유형 패턴 매칭 -->
-  <rect x="320" y="410" width="200" height="80" rx="8" class="box" />
-  <text x="420" y="440" text-anchor="middle" font-size="16" class="t-main">질문 유형 패턴 매칭</text>
-  <text x="420" y="462" text-anchor="middle" font-size="12" class="t-sub">목록형('어떤 게 있어?')</text>
-  <text x="420" y="478" text-anchor="middle" font-size="12" class="t-sub">vs 상세형('어떻게 신청해?')</text>
+  <line x1="340" y1="515" x2="340" y2="565" class="line" marker-end="url(#arrowhead)"/>
+  <text x="352" y="540" class="muted">보정 종합</text>
 
-  <!-- 합치는 트리: 좌/우 → Final -->
-  <line x1="180" y1="490" x2="180" y2="515" class="line" />
-  <line x1="420" y1="490" x2="420" y2="515" class="line" />
-  <line x1="180" y1="515" x2="420" y2="515" class="line" />
-  <line x1="300" y1="515" x2="300" y2="555" class="line" />
-  <polygon points="295,555 305,555 300,565" class="arrow" />
+  <!-- 4. 최종 의도 확정 (반전 강조) -->
+  <rect x="210" y="570" width="260" height="92" rx="8" class="vote-bg"/>
+  <text x="340" y="598" text-anchor="middle" class="vote-title">최종 의도 확정</text>
+  <text x="340" y="628" text-anchor="middle" class="vote-text">AI 추측 + 두 보정 종합</text>
 
-  <!-- 6. 최종 의도 확정 -->
-  <rect x="120" y="565" width="360" height="65" rx="8" class="box-strong" />
-  <text x="300" y="593" text-anchor="middle" font-size="18" class="t-main">최종 의도 확정</text>
-  <text x="300" y="615" text-anchor="middle" font-size="13" class="t-sub">AI 추측 + 두 보정을 합쳐 결과 확정</text>
+  <line x1="340" y1="662" x2="340" y2="712" class="line" marker-end="url(#arrowhead)"/>
 
-  <line x1="300" y1="630" x2="300" y2="660" class="line" />
-  <polygon points="295,660 305,660 300,670" class="arrow" />
+  <!-- 5. 의도별 답변 분기 -->
+  <rect x="70" y="717" width="540" height="210" rx="8" class="box"/>
+  <text x="340" y="745" text-anchor="middle" class="heading">의도별 답변 분기</text>
 
-  <!-- 7. 의도별 답변 분기 -->
-  <rect x="80" y="670" width="440" height="170" rx="8" class="box" />
-  <text x="300" y="700" text-anchor="middle" font-size="18" class="t-main">의도별 답변 분기</text>
+  <g>
+    <text x="105" y="782" class="muted">잡담 / 주제 외 질문</text>
+    <text x="320" y="782" text-anchor="middle" class="pink-fg">→</text>
+    <text x="355" y="782" class="body">안내 메시지</text>
 
-  <g font-size="13">
-    <text x="130" y="730" class="t-sub">잡담 / 주제 외 질문</text>
-    <text x="320" y="730" text-anchor="middle" class="arrow">→</text>
-    <text x="340" y="730" class="t-main">안내 메시지</text>
+    <text x="105" y="810" class="muted">정책 전반 문의</text>
+    <text x="320" y="810" text-anchor="middle" class="pink-fg">→</text>
+    <text x="355" y="810" class="body">정책 목록 안내</text>
 
-    <text x="130" y="752" class="t-sub">정책 전반 문의</text>
-    <text x="320" y="752" text-anchor="middle" class="arrow">→</text>
-    <text x="340" y="752" class="t-main">정책 목록 안내</text>
+    <text x="105" y="838" class="muted">특정 정책 상세</text>
+    <text x="320" y="838" text-anchor="middle" class="pink-fg">→</text>
+    <text x="355" y="838" class="body">정책 상세 안내</text>
 
-    <text x="130" y="774" class="t-sub">특정 정책 상세</text>
-    <text x="320" y="774" text-anchor="middle" class="arrow">→</text>
-    <text x="340" y="774" class="t-main">정책 상세 안내</text>
+    <text x="105" y="866" class="muted">맞춤 정책 추천</text>
+    <text x="320" y="866" text-anchor="middle" class="pink-fg">→</text>
+    <text x="355" y="866" class="body">프로필 기반 추천</text>
 
-    <text x="130" y="796" class="t-sub">맞춤 정책 추천</text>
-    <text x="320" y="796" text-anchor="middle" class="arrow">→</text>
-    <text x="340" y="796" class="t-main">프로필 기반 추천</text>
-
-    <text x="130" y="818" class="t-sub">정책 보고서 요청</text>
-    <text x="320" y="818" text-anchor="middle" class="arrow">→</text>
-    <text x="340" y="818" class="t-main">리포트 생성</text>
+    <text x="105" y="894" class="muted">정책 보고서 요청</text>
+    <text x="320" y="894" text-anchor="middle" class="pink-fg">→</text>
+    <text x="355" y="894" class="body">리포트 생성</text>
   </g>
 </svg>
