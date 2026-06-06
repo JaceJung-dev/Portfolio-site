@@ -590,7 +590,7 @@ const tempSessionId = generateUUID();`,
     period: "2025.12.17 - 2026.01.06",
     teamSize: "5명",
     role: "LLM 파이프라인 설계 및 데이터 증강",
-    overview: "CSAT-Solver는 네이버 커넥트재단의 컴페티션 형태로 진행된 프로젝트로, 대한민국 대학수학능력시험(CSAT) 유형의 문제를 해결하는 AI 모델을 설계하는 것을 목표로 합니다. 본 프로젝트에서 해결하고자 한 핵심 문제는, GPT·Claude·Gemini와 같은 초대형 모델이 아닌 상대적으로 작은 규모의 언어 모델(Small / Medium LLM)만으로도 CSAT형 문제를 얼마나 효과적으로 풀어낼 수 있는가였습니다. CSAT-Solver는 단순한 모델 성능 비교를 넘어, 수능이라는 시험에 최적화된 AI 모델을 설계할 수 있는가에 대한 실험이자 지속적인 학습의 과정, 그리고 도전입니다.",
+    overview: "GPT·Claude 같은 초대형 모델 없이, 상대적으로 작은 규모의 LLM만으로 수능형 문제를 얼마나 풀어낼 수 있을까라는 질문에서 출발한 프로젝트입니다. 네이버 커넥트재단 컴페티션 형태로, 제한된 자원 안에서 수능에 최적화된 모델을 설계하는 것을 목표로 했습니다.\n\nGPT-4o 기반으로 수능형 문제 데이터를 대량 생성·증강하고, QLoRA·Unsloth로 효율적인 파인튜닝 파이프라인을 설계했습니다. Two-stage CoT 추론 전략을 적용해 공개·비공개 리더보드 정답률(Macro F1)을 끌어올렸습니다.",
     heroImage: "/assets/csat-pipeline.svg",
     heroCaption: "모델 개발 파이프라인 — 데이터 → 학습 → 서빙(llama.cpp) → 개선",
     keyMetrics: [
@@ -947,7 +947,7 @@ if getattr(qc, "act_group_aware", False):
     period: "2025.12.03 - 2025.12.11",
     teamSize: "5명",
     role: "Retriever 및 Reader 모델 설계, 데이터 전처리 파이프라인 구축",
-    overview: "Open-Domain Question Answering(ODQA)은 별도의 지문 없이 사전 구축된 Knowledge resource에서 질문에 대답할 수 있는 문서를 검색하고 답변을 추출하는 고난이도 QA 과제입니다. 본 프로젝트에서는 질문과 관련된 문서를 찾는 Retriever 단계와 해당 문서에서 정답을 추출하는 Reader 단계로 구성된 2-stage 파이프라인을 설계했습니다. 두 단계를 효과적으로 통합하여, 다양한 도메인의 질문에 답변할 수 있는 ODQA 시스템을 구축했습니다.",
+    overview: "별도 지문 없이 방대한 문서 집합에서 질문에 맞는 근거를 찾아 답을 추출해야 하는 고난이도 QA 과제입니다. 네이버 커넥트재단 컴페티션 형태로 진행되었으며, 다양한 도메인의 질문에 답할 수 있는 ODQA 시스템을 구축하는 것을 목표로 했습니다.\n\n관련 문서를 찾는 Retriever와 정답을 추출하는 Reader로 이어지는 2-stage 파이프라인을 설계했습니다. BM25와 Dense(BGE-m3) 검색을 결합한 Hybrid Retrieval과 Hard Negative 학습으로 검색 품질을 높이고, 데이터 전처리·증강을 통해 EM·F1을 개선했습니다.",
     heroImage: "/assets/odqa-pipeline.svg",
     heroCaption: "Retriever–Reader 2-stage 파이프라인",
     keyMetrics: [
