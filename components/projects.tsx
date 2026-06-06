@@ -14,7 +14,7 @@ export const projects = [
     period: "2026.01.22 - 2026.02.07",
     teamSize: "5명",
     role: "백엔드 개발 및 LLM 파이프라인 구축 및 데이터 증강",
-    overview: "팬덤 소비가 단순 관람을 넘어 '참여'와 '정체성 형성' 중심으로 변화하는 흐름 속에서, 입덕 초기 사용자가 겪는 정보 과잉과 진입 장벽 문제를 해결하기 위해 기획된 서비스입니다.\n\n사용자의 성향과 취향을 대화 기반으로 분석하고, 각 구단 팬 페르소나를 가진 AI들과의 상호작용을 통해 가장 잘 맞는 KBO 리그 팀을 추천합니다. 단순한 팀 선택에 그치지 않고, 선택 이후에도 팬 AI와의 지속적인 대화를 통해 응원 포인트와 팀 서사를 자연스럽게 익히며 소속감을 형성하도록 설계된 입덕 여정 전반을 아우르는 야구 영업 챗봇 서비스입니다.",
+    overview: "KBO에 입덕하고 싶지만 어떤 팀을 응원할지 막막하고, 흩어진 정보 탓에 진입 장벽을 느끼는 야구 초심자를 위해 만든 영업 챗봇입니다. 대화로 사용자의 취향을 분석해 가장 잘 맞는 팀을 추천하고, 구단별 페르소나 AI와의 대화를 통해 응원 포인트와 팀 서사를 익히며 자연스럽게 소속감을 형성하도록 돕습니다.\n\nFastAPI 기반 백엔드와 LangGraph Agent 구조를 설계하고, 구단별 문서 RAG와 멀티 페르소나 상태 관리를 구현했습니다. RAGAS와 G-Eval 기반 평가를 통해 답변 충실도와 검색 정확도를 개선했습니다.",
     heroImage: "/assets/system-arch-ai2xogsfFbmtEcSWr1ib4S8C9xtUAU.png",
     heroCaption: "시스템 아키텍처 — 멀티 에이전트 · RAG · 데이터 파이프라인",
     keyMetrics: [
@@ -1264,7 +1264,7 @@ nbest_predictions[example_id] = stage2_nbest[example_id]  # ← 하드코딩 제
     teamSize: "5명",
     role: "백엔드 개발",
     overview:
-      "Django REST Framework(DRF)와 LangChain 기반으로 개발된 AI 챗봇 서비스로, 사용자의 상황과 특성에 맞는 정부·지자체 공공서비스를 맞춤 추천합니다. Retrieval-Augmented Generation(RAG) 방식을 적용해 LLM의 생성 능력과 실제 공공 데이터의 신뢰성을 결합하고, CrewAI 기반 멀티 에이전트 구조로 웹 검색과 보고서 생성을 자동화했습니다. WebSocket을 통한 실시간 응답 기능을 더해, 사용자와의 자연스러운 대화 경험을 구현했습니다.",
+      "흩어져 있어 찾기 어려운 정부·지자체 공공서비스를, 사용자의 상황과 특성에 맞게 골라주는 AI 챗봇입니다. 정보 접근성이 낮아 필요한 혜택을 놓치는 문제를 해결하고자 만들었습니다.\n\nDjango REST Framework 기반 백엔드를 개발하고, 공공 데이터 RAG와 Redis 기반 대화 이력 관리를 구현했습니다. CrewAI 멀티 에이전트로 웹 검색·보고서 생성을 자동화하고, WebSocket 실시간 응답 스트리밍으로 평균 응답 지연을 개선했습니다.",
     heroImage: "/assets/ainfo_architecture-QXth2mU2KLBuGs31L0sMYxweMGYUMs.png",
     heroCaption: "시스템 아키텍처 — RAG · CrewAI 멀티 에이전트 · WebSocket",
     keyMetrics: [
@@ -2530,7 +2530,7 @@ python vector_store/load_data.py`,
     teamSize: "4명",
     role: "백엔드 개발",
     overview:
-      "사용자의 독서 성향, 현재 감정 상태, 취향을 분석하여 최적의 도서를 추천하는 AI 챗봇 서비스입니다. LangChain과 ChromaDB를 활용하여 의미 기반 검색과 개인화된 추천을 제공합니다.",
+      "무엇을 읽을지 고민하는 사용자에게, 독서 성향과 그날의 감정·취향까지 반영해 책을 추천하는 AI 챗봇입니다. 단순 베스트셀러 나열을 넘어 '지금 나에게 맞는 책'을 찾아주는 것을 목표로 했습니다.\n\nDjango REST Framework 기반 백엔드를 개발하고, LangChain·ChromaDB로 의미 기반 검색과 개인화 추천을 구현했습니다. RAG 추천, LLM 추천, 결과 취합 세 모델로 역할을 분리한 추천 파이프라인을 설계했습니다.",
     heroImage: "/assets/bookgroo_architecture-ve1zwHQMDkrhPeRE5epGSfVJrUC1ZF.png",
     heroCaption: "시스템 아키텍처 — 3-Model 분리 추천 · RAG",
     galleryImages: [
