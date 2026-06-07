@@ -23,7 +23,7 @@ export function Hero() {
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <Github className="w-6 h-6" />
+              <Github className="w-8 h-8" />
               <span className="sr-only">GitHub</span>
             </a>
             <a
@@ -32,7 +32,7 @@ export function Hero() {
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <BookOpen className="w-6 h-6" />
+              <BookOpen className="w-8 h-8" />
               <span className="sr-only">Blog</span>
             </a>
           </div>
